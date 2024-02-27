@@ -5,12 +5,16 @@ html{
     background-color: white;
 }
 
+body{
+        margin: 0;
+}
+
 header{
     font-size: 13px;
     display: flex;
     align-items: center;
     padding-left: 32px;
-    padding-top: 1px;
+    padding-top: 10px;
     padding-bottom: 6px;
     justify-content: flex-end;
 }
@@ -102,10 +106,47 @@ a:hover{
     height: 34px;
     padding: 0 16px;
     margin: 11 2px;
-    border: 0px
+    border: 0px;
+    background-color: rgb(248, 249, 250);
 }
 
 .content .search-buttons .input-button:hover {
     border: 1px solid #dadce0; /* added border style */
     border-radius: 4px;
+}
+
+footer{
+    font-size: 15px;
+    height: 48px;
+    display: flex;
+    width: 100%;
+    background-color: rgb(248, 249, 250);
+    align-items: center;
+}
+
+.first{
+    bottom: 48px;
+    position: fixed;
+    border-bottom-color: rgb(218, 220, 224);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+
+.second{
+    bottom: 0;
+    position: fixed;
+}
+
+.second > div {
+    display: flex; /* Ensures children are displayed in a flex container */
+    justify-content: space-between; /* Spreads child elements horizontally */
+    flex-grow: 1; /* Allows child elements to grow to fill available space */
+}
+
+p{
+    padding: 15px 30px;
+}
+
+footer a{
+    padding: 15px 30px;
 }
