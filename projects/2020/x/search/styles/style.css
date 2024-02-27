@@ -51,6 +51,7 @@ a:hover{
     width: 272px;
 }
 
+
 .content .searchbar{
     font-size: 14px;
     font-family: arial, sans-serif;
@@ -188,4 +189,26 @@ footer a{
         color: #bdc1c6; /* Adjust link color for dark mode */
     }
 
+       /* Target the keyboard.svg */
+    .content .searchbar img[src*="keyboard.svg"] {
+        filter: invert(1); /* Invert the colors of the keyboard.svg */
+    }
+
+    /* Target the mic-fill.svg */
+    .content .searchbar img[src*="mic-fill.svg"] {
+        filter: invert(1); /* Invert the colors of the mic-fill.svg */
+    }
+    
+    .content .searchbar img[src*="camera.svg"] {
+        filter: invert(1); /* Invert the colors of the mic-fill.svg */
+    }
+
+    .content .searchbar img[src*="x-lg.svg"] {
+        filter: invert(1); /* Invert the colors of the mic-fill.svg */
+    }
+
+    .content .searchbar img[src*="search.svg"] {
+        filter: invert(1); /* Invert the colors of the mic-fill.svg */
+    }
+        
 }
