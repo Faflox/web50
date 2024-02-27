@@ -19,6 +19,7 @@ header{
     justify-content: flex-end;
 }
 
+
 header div{
     display: inline-block;
     line-height: normal;
@@ -108,11 +109,12 @@ a:hover{
     margin: 11 2px;
     border: 0px;
     background-color: rgb(248, 249, 250);
+    border-radius: 4px;
 }
 
 .content .search-buttons .input-button:hover {
     border: 1px solid #dadce0; /* added border style */
-    border-radius: 4px;
+    
 }
 
 footer{
@@ -139,8 +141,8 @@ footer{
 
 .second > div {
     display: flex; /* Ensures children are displayed in a flex container */
-    justify-content: space-between; /* Spreads child elements horizontally */
-    flex-grow: 1; /* Allows child elements to grow to fill available space */
+    flex: 100%;
+    justify-content: space-between;
 }
 
 p{
@@ -149,4 +151,41 @@ p{
 
 footer a{
     padding: 15px 30px;
+}
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+    html {
+        /* Update colors for dark mode */
+        background-color: #202124;
+        color: #bdc1c6;
+        /* Add other dark mode variables */
+    }
+
+    header {
+        color: white; /* Adjust header color for dark mode */
+    }
+
+    .content .searchbar{
+        border: 1px solid #5f6368;
+    }
+    
+    .content .search-buttons input{
+        background-color: #303134;
+        color: #ffffff;
+    }
+    
+
+    footer{
+        background-color: #171717
+    }
+
+    .first{
+        border-bottom-color: #3c4043;
+    }
+
+    a {
+        color: #bdc1c6; /* Adjust link color for dark mode */
+    }
+
 }
