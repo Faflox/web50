@@ -1,13 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href=styles/style.css>
-        <title>Image Search</title>
+        <title>Search</title>
     </head>
     <body>
-        
-        <form action="https://www.google.com/search">
-            <input type="text" name="q">
-        </form>
+        <header>
+            <div><a href="https://mail.google.com/mail/u/0/#inbox">Gmail</a></div>
+            <div><a href="index.html">Wyszukiwarka</a></div>
+            <div><a href="/advanced">Zaawansowane</a></div>
+            <div><a href="https://myaccount.google.com/"><img src="styles/google-logo-small.png" alt="Google Logo "></a></div>
+        </header>
+
+        <div class="content">
+            <div>
+                <img class="google-logo-big" src="styles/google-logo-big.svg" alt="Google Logo Big">
+            </div>
+            <div class="searchbar">
+                <div><img class="search-img" src="styles/search.svg" alt="Search"></div>
+
+                <div><form action="https://www.google.com/search">
+                    <input class="searchbar-window" type="text" name="q">
+                </form></div>
+
+                <div><button type="button" title="Wyczyść"> <img src="styles/x-lg.svg" alt="Delete"></button></div>
+
+                <div><img src="styles/keyboard.svg" title="Narzędzia do wprowadzania tekstu" alt="Keyboard"></div>
+                <div><img src="styles/mic-fill.svg" title="Wyszukiwanie głosowe" alt="Mic"></div>
+                <div><img src="styles/camera.svg" title="Wyszukiwanie obrazem" alt="Camera"></div>
+
+            </div>
+            <div class="search-buttons">
+                <input class="input-button" value="Szukaj w Google" role="button" type="submit">
+                <input class="input-button" value="Szczęśliwy traf" role="button" type="submit">
+            </div>
+        </div>
+
+        <footer class="first">
+            <p>Polska</p>  
+        </footer>
+        <footer class="second">
+            <div class="bottom-footer-left">
+                <div><a href="https://about.google">O nas</a></div>
+                <div><a href="https://ads.google.com">Reklamuj się</a></div>
+                <div><a href="https://www.google.com/services/">Dla firm</a></div>
+                <div><a href="https://www.google.com/search/howsearchworks">Jak działa wyszukiwarka</a></div>
+            </div>
+            <div class="bottom-footer-centre">
+                <div><a href="https://sustainability.google">Już 30 lat działamy na rzecz klimatu: zobacz, co robimy</a></div>
+            </div>
+            <div class="bottom-footer-right">
+                <div><a href="https://about.google">Prywatność</a></div>
+                <div><a href="https://ads.google.com">Warunki</a></div>
+                <div><a href="https://www.google.com/services/">Ustawienia</a></div>
+            </div>
+        </footer>
     </body>
 </html>
