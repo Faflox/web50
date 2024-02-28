@@ -119,7 +119,7 @@ a:hover{
 }
 
 footer{
-    font-size: 15px;
+    font-size: 14px;
     height: 48px;
     display: flex;
     width: 100%;
@@ -143,7 +143,23 @@ footer{
 .second > div {
     display: flex; /* Ensures children are displayed in a flex container */
     flex: 100%;
-    justify-content: space-between;
+}
+
+.bottom-footer-left{
+    display: grid;
+    justify-content:left;
+    padding-left: 10px;
+}
+
+.bottom-footer-centre{
+    text-align: center;
+    width: 392px;
+    padding-left: 60px;
+}
+
+.bottom-footer-right{
+    display: flex;
+    justify-content: flex-end;
 }
 
 p{
@@ -151,7 +167,7 @@ p{
 }
 
 footer a{
-    padding: 15px 30px;
+    padding: 15px;
 }
 
 /* Dark Mode Styles */
