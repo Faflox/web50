@@ -4,13 +4,13 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href=styles/style.css>
-        <title>Search</title>
+        <title>Image</title>
     </head>
     <body>
         <header>
             <div><a href="https://mail.google.com/mail/u/0/#inbox">Gmail</a></div>
             <div><a href="index.html">Wyszukiwarka</a></div>
-            <div><a href="/advanced">Zaawansowane</a></div>
+            <div><a href="advanced.html">Zaawansowane</a></div>
             <div><a href="https://myaccount.google.com/"><img src="styles/google-logo-small.png" alt="Google Logo "></a></div>
         </header>
 
@@ -21,8 +21,9 @@
             <div class="searchbar">
                 <div><img class="search-img" src="styles/search.svg" alt="Search"></div>
 
-                <div><form action="https://www.google.com/search">
+                <div><form action="https://www.google.com/search" method="GET">
                     <input class="searchbar-window" type="text" name="q">
+                    <input type="hidden" name="tbm" value="isch">
                 </form></div>
 
                 <div><button type="button" title="Wyczyść"> <img src="styles/x-lg.svg" alt="Delete"></button></div>

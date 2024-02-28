@@ -1,13 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl" class="advanced-html">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href=styles/style.css>
-        <title>Advanced Search</title>
+        <title>Advanced </title>
     </head>
     <body>
-        
-        <form action="https://www.google.com/search">
-            <input type="text" name="q">
-        </form>
+        <header class="advanced-header">
+            <div class="adv-img-l"><a href="https://myaccount.google.com/"><img src="styles/google-logo-big.svg" alt="Google Logo "></a></div>
+            <div><a href="https://myaccount.google.com/"><img src="styles/google-logo-small.png" alt="Google Logo "></a></div>
+        </header>
+
+        <div class="adv-content">
+            <h1>Szukanie zaawansowane</h1>
+            <h2>Znajdź strony zawierające...</h2>
+
+            <div class="adv-form">
+                <form action="https://www.google.com/search">
+                    <div class="adv-row">
+                        <p>wszystkie te słowa:</p>
+                        <input class="adv-searchbar-window" type="text" name="q">
+                        <p>Wpisz szukane słowa: trójkolorowy rat terrier</p>
+                    </div>
+
+                    <div class="adv-row">
+                        <p>dokładnie to wyrażenie:</p>
+                        <input class="adv-searchbar-window" type="text" name="q">
+                        <p class="small">Wpisz wyrażenie w cudzysłowach: "chart polski"</p>
+                    </div>
+
+                    <div class="adv-row">
+                        <p>dowolne z tych słów:</p>
+                        <input class="adv-searchbar-window" type="text" name="q">
+                        <p class="small">Wstaw OR między wpisane słowa: miniaturowy OR zwykły</p>
+                    </div>
+
+                    <div class="adv-row">
+                        <p>żadne z tych słów:</p>
+                        <input class="adv-searchbar-window" type="text" name="q">
+                        <p class="small">Umieść znak minus przed niepożądanymi słowami: -gryzonie, -"terier"</p>
+                    </div>
+                    
+                    <input class="adv-input-button" value="Wyszukiwanie zaawansowane" role="button" type="submit">
+                </form>
+            </div>
+                
+        </div>
+
+        <footer class="first advanced-footer">
+            <p>Polska</p>  
+        </footer>
+        <footer class="second advanced-footer">
+            <div class="bottom-footer-left">
+                <div><a href="https://about.google">O nas</a></div>
+                <div><a href="https://ads.google.com">Reklamuj się</a></div>
+                <div><a href="https://www.google.com/services/">Dla firm</a></div>
+                <div><a href="https://www.google.com/search/howsearchworks">Jak działa wyszukiwarka</a></div>
+            </div>
+            <div class="bottom-footer-centre">
+                <div><a href="https://sustainability.google">Już 30 lat działamy na rzecz klimatu: zobacz, co robimy</a></div>
+            </div>
+            <div class="bottom-footer-right">
+                <div><a href="https://about.google">Prywatność</a></div>
+                <div><a href="https://ads.google.com">Warunki</a></div>
+                <div><a href="https://www.google.com/services/">Ustawienia</a></div>
+            </div>
+        </footer>
     </body>
 </html>
