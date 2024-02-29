@@ -151,15 +151,16 @@ a:hover{
     cursor: pointer;
 }
 
-.content .search-buttons{
+.search-buttons{
     display: flex;
+    justify-content: center;
     height: 88px;
     gap: 10px;
     margin-top: 11px;
     padding: 0 14px;
 }
 
-.content .search-buttons input{
+.search-buttons input{
     font-size: 14px;
     font-family: arial, sans-serif;
     width: 140px;
@@ -171,9 +172,9 @@ a:hover{
     border-radius: 4px;
 }
 
-.content .search-buttons .input-button:hover {
+.search-buttons .input-button:hover {
     border: 1px solid #dadce0; /* added border style */
-    
+    cursor: pointer;
 }
 
 footer{
