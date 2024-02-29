@@ -20,29 +20,41 @@
                 <form action="https://www.google.com/search">
                     <div class="adv-row">
                         <p>wszystkie te słowa:</p>
-                        <input class="adv-searchbar-window" type="text" name="q">
+                        <input type="text" id="searchWords" name="as_q">
                         <p>Wpisz szukane słowa: trójkolorowy rat terrier</p>
                     </div>
 
                     <div class="adv-row">
                         <p>dokładnie to wyrażenie:</p>
-                        <input class="adv-searchbar-window" type="text" name="q">
+                        <input type="text" id="quotedExpression" name="as_epq">
                         <p class="small">Wpisz wyrażenie w cudzysłowach: "chart polski"</p>
                     </div>
 
                     <div class="adv-row">
                         <p>dowolne z tych słów:</p>
-                        <input class="adv-searchbar-window" type="text" name="q">
+                        <input type="text" id="orBetweenWords" name="as_oq">
                         <p class="small">Wstaw OR między wpisane słowa: miniaturowy OR zwykły</p>
                     </div>
 
                     <div class="adv-row">
                         <p>żadne z tych słów:</p>
-                        <input class="adv-searchbar-window" type="text" name="q">
+                        <input type="text" id="minusBeforeWords" name="as_eq">
                         <p class="small">Umieść znak minus przed niepożądanymi słowami: -gryzonie, -"terier"</p>
                     </div>
-                    
-                    <input class="adv-input-button" value="Wyszukiwanie zaawansowane" role="button" type="submit">
+
+
+                    <div class="adv-row">
+                        <p></p>
+                        <input class="adv-input-button" value="Wyszukiwanie zaawansowane" role="button" type="submit">
+                        <p></p> 
+                    </div>
+                    </div>
+                    <input type="hidden" name="lr" value="">
+                    <input type="hidden" name="cr" value="">
+                    <input type="hidden" name="as_qdr" value="all">
+                    <input type="hidden" name="as_sitesearch" value="">
+                    <input type="hidden" name="as_occt" value="any">
+                    <input type="hidden" name="as_filetype" value="">
                 </form>
             </div>
                 

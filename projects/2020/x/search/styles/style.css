@@ -56,7 +56,6 @@ header{
 }
 
 
-
 .adv-row{
     display:grid;
     grid-template-columns: 17% 30% 30%;
@@ -66,6 +65,17 @@ header{
 .adv-searchbar-window{
     border: 1px solid #30313432;
     padding: 7px;
+}
+
+.adv-input-button{
+    margin: 10 10px;
+    background-color: #4d90fd;
+    font-size: 10px;
+    color: #ffffff;
+    width: 226px;
+    padding: 0 12px;
+    border: 1px solid #3079ed;
+    border-radius: 3px;
 }
 
 
@@ -143,7 +153,6 @@ a:hover{
 
 .content .search-buttons{
     display: flex;
-    align-items: center;
     height: 88px;
     gap: 10px;
     margin-top: 11px;
@@ -182,7 +191,6 @@ footer{
 }
 
 
-
 .first{
     bottom: 48px;
     position: fixed;
@@ -194,6 +202,7 @@ footer{
 .second{
     bottom: 0;
     position: fixed;
+    color: #70757a;
 }
 
 .second > div {
@@ -224,63 +233,4 @@ p{
 
 footer a{
     padding: 15px;
-}
-
-/* Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-    html {
-        /* Update colors for dark mode */
-        background-color: #202124;
-        color: #bdc1c6;
-        /* Add other dark mode variables */
-    }
-
-    header {
-        color: white; /* Adjust header color for dark mode */
-    }
-
-    .content .searchbar{
-        border: 1px solid #5f6368;
-    }
-    
-    .content .search-buttons input{
-        background-color: #303134;
-        color: #ffffff;
-    }
-    
-
-    footer{
-        background-color: #171717
-    }
-
-    .first{
-        border-bottom-color: #3c4043;
-    }
-
-    a {
-        color: #bdc1c6; /* Adjust link color for dark mode */
-    }
-
-       /* Target the keyboard.svg */
-    .content .searchbar img[src*="keyboard.svg"] {
-        filter: invert(1); /* Invert the colors of the keyboard.svg */
-    }
-
-    /* Target the mic-fill.svg */
-    .content .searchbar img[src*="mic-fill.svg"] {
-        filter: invert(1); /* Invert the colors of the mic-fill.svg */
-    }
-    
-    .content .searchbar img[src*="camera.svg"] {
-        filter: invert(1); /* Invert the colors of the mic-fill.svg */
-    }
-
-    .content .searchbar img[src*="x-lg.svg"] {
-        filter: invert(1); /* Invert the colors of the mic-fill.svg */
-    }
-
-    .content .searchbar img[src*="search.svg"] {
-        filter: invert(1); /* Invert the colors of the mic-fill.svg */
-    }
-        
 }
