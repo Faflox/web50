@@ -23,9 +23,20 @@ header{
     justify-content: flex-end;
 }
 
-.advanced-header{
+.advanced-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Adjust padding as needed */
+}
+
+.adv-links {
+    display: flex;
+    align-items: center;
+}
+
+.adv-links > div {
+    margin-left: 10px; /* Adjust margin between links as needed */
 }
 
 .adv-img-l img{
