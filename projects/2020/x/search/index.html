@@ -18,26 +18,37 @@
             <div>
                 <img class="google-logo-big" src="styles/google-logo-big.svg" alt="Google Logo Big">
             </div>
-            <form action="https://www.google.com/search">
-            <div class="searchbar">
-                <div><img class="search-img" src="styles/search.svg" alt="Search"></div>
-
-                <div>
-                    <input class="searchbar-window" type="text" name="q">
+            <form id="google-search-form" action="https://www.google.com/search">
+                <div class="searchbar">
+                    <div><img class="search-img" src="styles/search.svg" alt="Search"></div>
+            
+                    <div>
+                        <input class="searchbar-window" type="text" name="q">
+                    </div>
+            
+                    <div><button type="button" title="Wyczyść"> <img src="styles/x-lg.svg" alt="Delete"></button></div>
+            
+                    <div><img src="styles/keyboard.svg" title="Narzędzia do wprowadzania tekstu" alt="Keyboard"></div>
+                    <div><img src="styles/mic-fill.svg" title="Wyszukiwanie głosowe" alt="Mic"></div>
+                    <div><img src="styles/camera.svg" title="Wyszukiwanie obrazem" alt="Camera"></div>
+            
                 </div>
-
-                <div><button type="button" title="Wyczyść"> <img src="styles/x-lg.svg" alt="Delete"></button></div>
-
-                <div><img src="styles/keyboard.svg" title="Narzędzia do wprowadzania tekstu" alt="Keyboard"></div>
-                <div><img src="styles/mic-fill.svg" title="Wyszukiwanie głosowe" alt="Mic"></div>
-                <div><img src="styles/camera.svg" title="Wyszukiwanie obrazem" alt="Camera"></div>
-
-            </div>
-            <div class="search-buttons">
-                <input class="input-button" value="Szukaj w Google" role="button" type="submit">
-                <input class="input-button" value="Szczęśliwy traf" role="button" type="submit">
-            </div>
+                <div class="search-buttons">
+                    <input class="input-button" value="Szukaj w Google" role="button" type="submit">
+                    <input class="input-button" value="Szczęśliwy traf" role="button" type="button" onclick="redirectToFirstResult()">
+                </div>
             </form>
+            
+            <script>
+                function redirectToFirstResult() {
+                    var query = document.querySelector('#google-search-form input[name="q"]').value;
+                    if (query.trim() !== '') {
+                        var searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(query) + '&btnI';
+                        window.location.href = searchUrl;
+                    }
+                }
+            </script>
+            
         </div>
 
         <footer class="first">
