@@ -27,7 +27,7 @@ header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px; /* Adjust padding as needed */
+    padding: 10px 20px; 
 }
 
 .adv-links {
@@ -36,7 +36,7 @@ header{
 }
 
 .adv-links > div {
-    margin-left: 10px; /* Adjust margin between links as needed */
+    margin-left: 10px;
 }
 
 .adv-img-l img{
@@ -117,7 +117,7 @@ a:hover{
 }
 
 .content .google-logo-big{
-    margin-top: 170px; /* fix later */
+    margin-top: 170px;
     width: 272px;
 }
 
@@ -153,7 +153,7 @@ a:hover{
 }
 
 .searchbar-window:focus {
-    outline: none; /* Remove default focus outline */
+    outline: none;
 }
 
 .searchbar button{
@@ -184,7 +184,7 @@ a:hover{
 }
 
 .search-buttons .input-button:hover {
-    border: 1px solid #dadce0; /* added border style */
+    border: 1px solid #dadce0;
     cursor: pointer;
 }
 
@@ -218,7 +218,7 @@ footer{
 }
 
 .second > div {
-    display: flex; /* Ensures children are displayed in a flex container */
+    display: flex;
     flex: 100%;
 }
 
