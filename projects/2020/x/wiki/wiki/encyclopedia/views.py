@@ -1,6 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render
 from .util import get_entry
+import markdown
 
 from . import util
 
@@ -11,10 +12,10 @@ def index(request):
     })
 
 
-def entry_name(request, title):
+def entry_page(request, title):
     content = get_entry(title)
     if content is not None:
-         return render(request, "encyclopedia/entry.html", {"title": title, "content": content})
+        html_content = markdown.markdown(content)
+        return render(request, "encyclopedia/entry.html", {"title": title, "content": html_content})
     else:
         raise Http404("Entry does not exist")
-     
