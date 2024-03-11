@@ -5,10 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <form action="{% url 'new_page' %}" method="post">
+    <form action="{% url 'edit_page' title=title %}" method="post">
         {% csrf_token %}
         <div class="form-group">
             <div>
