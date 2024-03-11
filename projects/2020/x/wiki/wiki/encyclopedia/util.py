@@ -40,3 +40,6 @@ def get_entry(title):
 def random_page():
     titles = list_entries()
     return random.choice(titles)
+
+#to do 
+#search and edit pages

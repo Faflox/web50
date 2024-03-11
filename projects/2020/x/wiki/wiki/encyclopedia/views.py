@@ -38,3 +38,12 @@ def new_page(request):
 def random_page(request):
     title = util.random_page()
     return redirect("entry", title=title)
+
+def edit_page(request, title):
+    if request.method == "POST":
+        content = request.POST["content"]
+        util.save_entry(title, content)
+        return redirect("entry", title=title)
+    else:
+        content = get_entry(title)
+        return render(request, "encyclopedia/edit_page.html", {"title": title, "content": content})
