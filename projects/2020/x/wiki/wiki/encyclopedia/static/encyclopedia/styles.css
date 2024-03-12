@@ -26,7 +26,8 @@ h1 {
 .sidebar {
     background-color: #f0f0f0;
     height: 100vh;
-    padding: 20px;
+    padding: 15px;
+    padding-left: 30px;
 }
 
 .sidebar h2 {
@@ -34,7 +35,6 @@ h1 {
 }
 
 .form-group {
-
     padding: 100px;
     margin: 10px;
     border-radius: 5px;
