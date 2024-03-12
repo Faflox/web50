@@ -1,10 +1,18 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from .util import get_entry
 import markdown
+import random
 
 from . import util
 
+def convert_to_html(title):
+    content = util.get_entry(title)
+    markdowner = markdown.Markdown()
+    if content == None:
+        return None
+    else:
+        return markdowner.convert(content)
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -36,7 +44,8 @@ def new_page(request):
         return render(request, "encyclopedia/new_page.html")
     
 def random_page(request):
-    title = util.random_page()
+    titles = util.list_entries()
+    title = random.choice(titles)
     return redirect("entry", title=title)
 
 def edit_page(request, title):
@@ -47,3 +56,21 @@ def edit_page(request, title):
     else:
         content = get_entry(title)
         return render(request, "encyclopedia/edit_page.html", {"title": title, "content": content})
+    
+def search(request):
+    if request.method == "POST":
+        query =  request.POST["q"]
+        content = convert_to_html(query)
+        if content is not None:
+            return redirect(request, "encyclopedia/entry.html", {
+                "title": query, 
+                "content": content
+                })
+        else:
+            results = []
+            for entry in util.list_entries():
+                if query.lower() in entry.lower():
+                    results.append(entry)
+            return render(request, "encyclopedia/search.html", {
+                "results": results
+                })   
