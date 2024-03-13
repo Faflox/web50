@@ -14,6 +14,22 @@ def convert_to_html(title):
     else:
         return markdowner.convert(content)
 
+
+
+def search(request):
+    if request.method == "POST":
+        query =  request.POST["q"]
+        content = convert_to_html(query)
+        if content is not None:
+            return render(request, "encyclopedia/entry.html", {"title": query, "content": content})
+        else:
+            results = []
+            for entry in util.list_entries():
+                if query.lower() in entry.lower():
+                    results.append(entry)
+            return render(request, "encyclopedia/search.html", {"results": results}) 
+
+
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
@@ -42,11 +58,13 @@ def new_page(request):
             return redirect("entry", title=title)
     else:
         return render(request, "encyclopedia/new_page.html")
+  
     
 def random_page(request):
     titles = util.list_entries()
     title = random.choice(titles)
     return redirect("entry", title=title)
+
 
 def edit_page(request, title):
     if request.method == "POST":
@@ -56,21 +74,5 @@ def edit_page(request, title):
     else:
         content = get_entry(title)
         return render(request, "encyclopedia/edit_page.html", {"title": title, "content": content})
+ 
     
-def search(request):
-    if request.method == "POST":
-        query =  request.POST["q"]
-        content = convert_to_html(query)
-        if content is not None:
-            return redirect(request, "encyclopedia/entry.html", {
-                "title": query, 
-                "content": content
-                })
-        else:
-            results = []
-            for entry in util.list_entries():
-                if query.lower() in entry.lower():
-                    results.append(entry)
-            return render(request, "encyclopedia/search.html", {
-                "results": results
-                })   
