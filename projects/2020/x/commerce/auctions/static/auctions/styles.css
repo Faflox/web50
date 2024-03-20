@@ -1,0 +1,13 @@
+body {
+    padding: 20px;
+}
+
+.alert {
+    margin-bottom: 10px;
+    margin-left: 30px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+}
