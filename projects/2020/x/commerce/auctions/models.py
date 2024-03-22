@@ -5,13 +5,25 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+
+class Category(models.Model):
+    categoryName=models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.categoryName
+
 class Listing(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField()
-    image = models.URLField()
-    starting_price = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True, related_name="category")
+    description = models.CharField(max_length=500)
+    image = models.CharField(max_length=500, blank=True)
+    starting_price = models.FloatField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
     active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.title
+    
     
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
@@ -21,4 +33,4 @@ class Bid(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
-    text = models.TextField()
+    text = models.TextField(max_length=500)

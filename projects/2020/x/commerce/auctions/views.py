@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Listing, Comment, Bid, Category
 
 
 def index(request):
@@ -63,4 +63,23 @@ def register(request):
         return render(request, "auctions/register.html")
     
 def create(request):
-        return render(request, "auctions/create.html")
+    if request.method == "GET":
+        allCategories = Category.objects.all()
+        return render(request, "auctions/create.html", {
+            "categories": allCategories
+        })
+    elif request.method =="POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        image = request.POST.get("image")
+        starting_price = request.POST.get("starting_price")
+        
+        listing = Listing(
+            title=title, 
+            description=description, 
+            image=image, 
+            starting_price=starting_price)
+        listing.save()
+        
+    return render(request, "auctions/create.html")
+    

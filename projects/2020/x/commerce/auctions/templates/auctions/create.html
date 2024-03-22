@@ -10,6 +10,12 @@
             <input class="form-control" type="text" name="title" placeholder="Title">
         </div>
         <div class="form-group">
+            <select class="form-control" name="category" placeholder="Category">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.categoryName }}</option>
+                {% endfor %}
+            </select>
+        <div class="form-group">
             <input class="form-control" type="text" name="description" placeholder="Description">
         </div>
         <div class="form-group">
