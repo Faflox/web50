@@ -14,27 +14,34 @@
 
     <div class="content">
         <div class="left-row">
-            
-            image
-            <br>
-            Joined: {{ user.date_joined.date}}
-            <br>
-            followers
-            following
-            <button>Follow Button</button>
-        </div>
-
-        <div class="right-row">
-            {{ user.username }}
+            <div class="profile-image-container">
+                <img class="profile-image">
+            </div>
+            <b>{{ user.username }}</b>
             <br>
             {{ user.first_name }}
             {{ user.last_name }}
             <br>
+            <br>
+            <div class="followers-stats">
+                <div>
+                    <!-- <img src="styles/followers.svg" alt="Followers"> -->
+                    Followers:
+                </div>
+                <div>
+                    Following:
+                </div>
+            </div>
+            <button class="action-button">Follow Button</button>
             {{ user.description }}
             <br>
+            Joined: {{ user.date_joined.date}}
+        </div>
+
+        <div class="right-row">
             Posts
         </div>
 
     </div>
-
+    
 {% endblock %}

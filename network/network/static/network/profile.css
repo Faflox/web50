@@ -6,7 +6,7 @@
     width: 360px;
     display: flex;
     flex-direction: column;
-    padding: 4px;
+    padding: 24px;
     margin-right: 16px;
     background-color: aquamarine;
 }
@@ -17,4 +17,24 @@
     flex-direction: column;
     padding: 4px;
     background-color: aquamarine;
+}
+
+.profile-image-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-image{
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    object-fit: cover;
+    background-color: black;
+    margin: 8px 20px;
+}
+
+.followers-stats{
+    display: flex;
+    justify-content:space-evenly;
 }
