@@ -1,0 +1,24 @@
+.content{
+    max-width: 1200px;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 8px 20px;
+    background-color: rgb(1, 255, 1);
+}
+
+.navbar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-item{
+    margin: 0 4px;
+    background-color: aqua;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+}
