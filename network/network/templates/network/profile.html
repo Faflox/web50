@@ -17,8 +17,13 @@
             <div class="profile-image-container">
                 {% if user.profilePicture %}
                     <img class="profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
-                {% endif %}   
+                {% endif %}
             </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input class="action-button" type="file" name="profilePicture" accept="image/*">
+                <input class="action-button" type="submit" value="Change Profile Picture">
+            </form> 
             <b>{{ user.username }}</b>
             <br>
             {{ user.first_name }}
@@ -35,7 +40,12 @@
                 </div>
             </div>
             <button class="action-button">Follow Button</button>
-            {{ user.description }}
+            <div class="description">
+                {{ user.description }}
+                <input type="submit" class="action-button" value="Edit Description" onclick="openModal()">
+            </div>
+            <div id="description-modal" class="modal">
+            </div>
             <br>
             Joined: {{ user.date_joined.date}}
         </div>

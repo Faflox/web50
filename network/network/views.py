@@ -68,4 +68,13 @@ def register(request):
 
 
 def profile(request):
+    if request.method == "POST":
+        if 'profilePicture' in request.FILES:
+            profilePicture = request.FILES['profilePicture']
+            user = request.user
+            if user.profilePicture:
+                user.profilePicture.delete()
+            user.profilePicture = profilePicture
+            user.save()
     return render(request, "network/profile.html")
+
