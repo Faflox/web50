@@ -11,19 +11,24 @@
 
 
 {% block body %}
-
     <div class="content">
         <div class="left-row">
             <div class="profile-image-container">
                 {% if user.profilePicture %}
                     <img class="profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
+                {% else %}
+                    <img class="profile-image" src="images/default.jpg" alt="Profile Picture">
                 {% endif %}
             </div>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input class="action-button" type="file" name="profilePicture" accept="image/*">
-                <input class="action-button" type="submit" value="Change Profile Picture">
-            </form> 
+            
+            <button class="action-button change-profile-picture-button">Edit Profile Picture</button>
+            <div class="change-profile-picture">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input class="action-button" type="file" name="profilePicture" accept="image/*">
+                    <input class="action-button" type="submit" value="Submit">
+                </form>
+            </div>
             <b>{{ user.username }}</b>
             <br>
             {{ user.first_name }}
@@ -53,7 +58,18 @@
         <div class="right-row">
             Posts
         </div>
-
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButton = document.querySelector('.change-profile-picture-button');
+            const changeProfilePicture = document.querySelector('.change-profile-picture');
+            changeProfilePicture.style.display = 'none';
+      
+            editButton.addEventListener('click', function() {
+                changeProfilePicture.style.display = changeProfilePicture.style.display === 'none' ? 'block' : 'none';
+          });
+      });
+    </script>
     
 {% endblock %}
