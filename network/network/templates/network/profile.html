@@ -15,7 +15,9 @@
     <div class="content">
         <div class="left-row">
             <div class="profile-image-container">
-                <img class="profile-image">
+                {% if user.profilePicture %}
+                    <img class="profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
+                {% endif %}   
             </div>
             <b>{{ user.username }}</b>
             <br>
