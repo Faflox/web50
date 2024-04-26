@@ -47,7 +47,7 @@
             <button class="action-button">Follow Button</button>
             <div class="description">
                 {{ user.description }}
-                <input type="submit" class="action-button" value="Edit Description" onclick="openModal()">
+                <input type="submit" class="action-button change-description-button" value="Edit Description" onclick="openModal()">
             </div>
             <div id="description-modal" class="modal">
             </div>
@@ -56,20 +56,46 @@
         </div>
 
         <div class="right-row">
-            Posts
+
+            {% if posts %}
+                <div class="posts-container">
+                    {% for post in posts %}
+                        <div class="post">
+                            <div class="first-row">
+                                <b>From: {{ post.user.username }}</b>
+                                <br>
+                                <i>{{ post.date }}</i>
+                            </div>
+                            <br>
+                            {{ post.content }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="loader">No posts from this user yet.</div>
+            {% endif %}
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = '{{ user }}';
             const editButton = document.querySelector('.change-profile-picture-button');
+            const changeDescriptionButton = document.querySelector('.change-description-button');
             const changeProfilePicture = document.querySelector('.change-profile-picture');
             changeProfilePicture.style.display = 'none';
-      
+
+            load_posts(currentUser);
+
+            if (currentUser !== '{{ user.username }}') {
+                editButton.style.display = 'none';
+                changeDescriptionButton.style.display = 'none';
+            }
+        
             editButton.addEventListener('click', function() {
                 changeProfilePicture.style.display = changeProfilePicture.style.display === 'none' ? 'block' : 'none';
-          });
-      });
+            });
+        });
+
     </script>
-    
 {% endblock %}

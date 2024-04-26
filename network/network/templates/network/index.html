@@ -3,7 +3,29 @@
 
 {% block body %}
     <div class="content">
-        Hi
-
+        {% if posts %}
+                <div class="posts-container">
+                    {% for post in posts %}
+                        <div class="post">
+                            <div class="post-first-row">
+                                <img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture">
+                                <br>
+                                <p>Follow</p>
+                                <br>
+                                <p>{{ post.likes }} likes</p>
+                            </div>
+                            <div class="post-second-row">
+                                <div class="post-info">
+                                    <b>{{ post.user.username }}</b>
+                                    <i>{{ post.date }}</i>
+                                </div>
+                                {{ post.content }}
+                            </div>  
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="loader">No posts from this user yet.</div>
+            {% endif %}
     </div>
 {% endblock %}

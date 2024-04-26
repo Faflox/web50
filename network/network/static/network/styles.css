@@ -32,3 +32,33 @@
     justify-content: center;
     padding: 4px 8px;
 }
+
+.post{
+    background-color: rgb(199, 34, 166);
+    border-radius: 10px;
+    padding: 4px 8px;
+    margin-top: 12px;
+    width: 80ch;
+    display: flex;
+}
+
+.post-first-row{
+    align-items: center;
+    width: 30%;
+    border-right: 1px solid black;
+}
+
+.post-profile-image{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-second-row{
+    width: 70%;
+}
+
+.post-info{
+    display: flex;
+    justify-content: space-between;
+}
