@@ -1,14 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from .models import User, Post
 
 
 def index(request):
     posts = Post.objects.all().order_by("-date")
+    
     return render(request, "network/index.html", {"posts": posts})
 
 
@@ -80,4 +82,14 @@ def profile(request):
             user.save()
     posts = Post.objects.filter(user=user)
     return render(request, "network/profile.html", {'posts': posts})
+
+def create_post(request):
+    if request.method == "POST":
+        content = request.POST["content"]
+        if content:
+            Post.objects.create(user=request.user, content=content)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return HttpResponseRedirect(reverse("index"))
+
 
