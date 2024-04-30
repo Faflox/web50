@@ -3,6 +3,7 @@
 
 {% block body %}
     <div class="content">
+        <!--creating a new post appears when user is authenticated-->
         {% if request.user.is_authenticated %}
         <div class="posts-container">
             <div class="post">
@@ -10,18 +11,20 @@
                     <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
                 </div>
                 <div class="post-second-row">
-                    <textarea name="content" id="content" placeholder="What's on your mind?"></textarea>
-                    <input type="submit" class="action-button" value="Post">
+                    <textarea name="content" id="new-post-content" class="new-post-content" placeholder="What's on your mind?"></textarea>
+                    <button type="submit" id="post-button" class="action-button" value="Post">Post it!</button>
                 </div>  
             </div>
         </div>
         {% endif %}
+
+        <!--displaying posts-->
         {% if posts %}
             <div class="posts-container">
-                {% for post in posts %}
+                {% for post in posts_paginated %}
                     <div class="post">
                         <div class="post-first-row">
-                            <a href="/profile/{{ post.user.username }}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
+                            <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
                             <br>
                             <p>Follow</p>
                             <br>
@@ -37,40 +40,27 @@
                     </div>
                 {% endfor %}
             </div>
-            {% else %}
-                <div class="loader">No posts from this user yet.</div>
+        {% else %}
+            <div class="loader">No posts to show,  probably something is wrong.</div>
+        {% endif %}
+
+        <!--paginator-->
+        <div class="paginator">
+            {% if posts_paginated.has_previous %}
+                <a href="?page=1">&laquo; First</a>
+                <a href="?page={{ posts_paginated.previous_page_number}}">Previous</a>
             {% endif %}
+            
+            Page {{ posts_paginated.number}} of {{ posts_paginated.paginator.num_pages }}
+
+            {% if posts_paginated.has_next %}
+                <a href="?page={{ posts_paginated.next_page_number }}">Next</a>
+                <a href="?page={{ posts_paginated.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = '{{ user }}';
-            const content = document.getElementById('content');
-
-            const submitButton = document.querySelector('.post input[type="submit"]');
-            submitButton.addEventListener('click', function() {
-                const contentValue = content.value;
-
-                fetch('/create_post', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        'content': contentValue
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        alert(data.error);
-                    }
-                })
-                
-            })
-        });
+        
     </script>
 {% endblock %}

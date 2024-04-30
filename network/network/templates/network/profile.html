@@ -14,13 +14,11 @@
     <div class="content">
         <div class="left-row">
             <div class="profile-image-container">
-                {% if user.profilePicture %}
-                    <img class="profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
-                {% else %}
-                    <img class="profile-image" src="images/default.jpg" alt="Profile Picture">
-                {% endif %}
+                <img class="profile-image" src="{{ user_profile_info.profilePicture.url }}" alt="Profile Picture">
             </div>
             
+            <!--this part works only when the logged user is the same as passed arguments from profile-->
+            {% if request.user.username == user_profile_info.username %}
             <button class="action-button change-profile-picture-button">Edit Profile Picture</button>
             <div class="change-profile-picture">
                 <form method="POST" enctype="multipart/form-data">
@@ -29,32 +27,39 @@
                     <input class="action-button" type="submit" value="Submit">
                 </form>
             </div>
-            <b>{{ user.username }}</b>
+            {% endif %}
+
+            <!--display user_profile_info-->
+            <b>{{ user_profile_info.username }}</b>
             <br>
-            {{ user.first_name }}
-            {{ user.last_name }}
+            {{ user_profile_info.first_name }}
+            {{ user_profile_info.last_name }}
             <br>
             <br>
             <div class="followers-stats">
                 <div>
-                    <!-- <img src="styles/followers.svg" alt="Followers"> -->
-                    Followers:
+                    Followers: {{user_profile_info.followed_by.all|length}}
                 </div>
                 <div>
-                    Following:
+                    Following: {{user_profile_info.is_following.all|length}}
                 </div>
             </div>
+            {% if request.user.username != user_profile_info.username %}
             <button class="action-button">Follow Button</button>
+            {% endif %}
+
+            <!--Description. can edit only when on your profile-->
             <div class="description">
                 {{ user.description }}
+                {% if request.user.username == user_profile_info.username %}
                 <input type="submit" class="action-button change-description-button" value="Edit Description" onclick="openModal()">
-            </div>
-            <div id="description-modal" class="modal">
+                {% endif %}
             </div>
             <br>
             Joined: {{ user.date_joined.date}}
         </div>
 
+        <!--row that contrains posts-->
         <div class="right-row">
 
             {% if posts %}
@@ -78,24 +83,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = '{{ user }}';
-            const editButton = document.querySelector('.change-profile-picture-button');
-            const changeDescriptionButton = document.querySelector('.change-description-button');
-            const changeProfilePicture = document.querySelector('.change-profile-picture');
-            changeProfilePicture.style.display = 'none';
-
-            load_posts(currentUser);
-
-            if (currentUser !== '{{ user.username }}') {
-                editButton.style.display = 'none';
-                changeDescriptionButton.style.display = 'none';
-            }
-        
-            editButton.addEventListener('click', function() {
-                changeProfilePicture.style.display = changeProfilePicture.style.display === 'none' ? 'block' : 'none';
-            });
-        });
 
     </script>
 {% endblock %}

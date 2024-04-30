@@ -1,0 +1,89 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="content">
+        {% if request.user.is_authenticated %}
+        <div class="posts-container">
+            <div class="post">
+                <div class="post-first-row">
+                    <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
+                </div>
+                <div class="post-second-row">
+                    <textarea name="content" id="content" placeholder="What's on your mind?"></textarea>
+                    <input type="submit" class="action-button" value="Post">
+                </div>  
+            </div>
+        </div>
+        {% endif %}
+        {% if posts %}
+            <div class="posts-container">
+                {% for post in posts %}
+                    <div class="post">
+                        <div class="post-first-row">
+                            <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
+                            <br>
+                            <p>Follow</p>
+                            <br>
+                            <p>{{ post.likes }} likes</p>
+                        </div>
+                        <div class="post-second-row">
+                            <div class="post-info">
+                                <b>{{ post.user.username }}</b>
+                                <i>{{ post.date }}</i>
+                            </div>
+                            {{ post.content }}
+                        </div>  
+                    </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <div class="loader">No posts from this user yet.</div>
+            {% endif %}
+            <div class="paginator">
+                {% if posts_paginated.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ posts_paginated.previous_page_number}}">Previous</a>
+                {% endif %}
+                
+                Page {{ posts_paginated.number}} of {{ posts_paginated.paginator.num_pages }}
+
+                {% if posts_paginated.has_next %}
+                    <a href="?page={{ posts_paginated.next_page_number }}">Next</a>
+                    <a href="?page={{ posts_paginated.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = '{{ user }}';
+            const content = document.getElementById('content');
+
+            const submitButton = document.querySelector('.post input[type="submit"]');
+            submitButton.addEventListener('click', function() {
+                const contentValue = content.value;
+
+                fetch('/create_post', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        'content': contentValue
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                
+            })
+        });
+    </script>
+{% endblock %}
