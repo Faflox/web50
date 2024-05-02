@@ -1,12 +1,15 @@
+import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Post
+from .models import User, Post, Like
 
 
 def index(request):
@@ -87,10 +90,12 @@ def profile(request, username):
     return render(request, "network/profile.html", {'user_profile_info': user_profile_info, 'posts': user_posts, 'logged_in_user': request.user})
 
 
-
+@csrf_exempt
+@login_required
 def create_post(request):
     if request.method == "POST":
-        content = request.POST["content"]
+        data = json.loads(request.body)
+        content = data.get("content")
         if content:
             Post.objects.create(user=request.user, content=content)
             return HttpResponseRedirect(reverse("index"))
