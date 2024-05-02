@@ -111,3 +111,4 @@ def following(request):
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
     return render(request, "network/following.html", {"posts": posts, "posts_paginated": posts_paginated})
+
