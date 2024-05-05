@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Post, Like
+from .models import User, Post, Like, Followers
 
 
 def index(request):
@@ -102,6 +102,25 @@ def create_post(request):
         else:
             return HttpResponseRedirect(reverse("index"))
 
+@csrf_exempt
+@login_required
+def follow_unfollow(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action_profile = data.get("content")
+        logged_in_user = request.user
+
+        # Check if the user is already following the profile
+        if Followers.objects.filter(user_id=logged_in_user, follower_id=action_profile).exists():
+            # If the follow relationship exists, delete it (unfollow)
+            Followers.objects.filter(user_id=logged_in_user, follower_id=action_profile).delete()
+            return JsonResponse({'status': 'unfollowed'})
+        else:
+            # If the follow relationship doesn't exist, create it (follow)
+            Followers.objects.create(user_id=logged_in_user, follower_id=action_profile)
+            return JsonResponse({'status': 'followed'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 def following(request):
     #retrieve currently logged user's info
@@ -116,4 +135,9 @@ def following(request):
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
     return render(request, "network/following.html", {"posts": posts, "posts_paginated": posts_paginated})
+
+
+
+
+    
 

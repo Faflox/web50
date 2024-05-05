@@ -3,22 +3,10 @@
 
 {% block body %}
     <div class="content">
-        {% if request.user.is_authenticated %}
-        <div class="posts-container">
-            <div class="post">
-                <div class="post-first-row">
-                    <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
-                </div>
-                <div class="post-second-row">
-                    <textarea name="content" id="content" placeholder="What's on your mind?"></textarea>
-                    <input type="submit" class="action-button" value="Post">
-                </div>  
-            </div>
-        </div>
-        {% endif %}
+        <!--displaying posts-->
         {% if posts %}
             <div class="posts-container">
-                {% for post in posts %}
+                {% for post in posts_paginated %}
                     <div class="post">
                         <div class="post-first-row">
                             <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
@@ -56,36 +44,4 @@
                 {% endif %}
             </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = '{{ user }}';
-            const content = document.getElementById('content');
-
-            const submitButton = document.querySelector('.post input[type="submit"]');
-            submitButton.addEventListener('click', function() {
-                const contentValue = content.value;
-
-                fetch('/create_post', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        'content': contentValue
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        alert(data.error);
-                    }
-                })
-                
-            })
-        });
-    </script>
 {% endblock %}
