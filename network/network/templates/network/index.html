@@ -23,16 +23,31 @@
         <!--displaying posts-->
         {% if posts %}
             <div class="posts-container">
+
+
+                {% for follower in followers %}
+                    <!-- Access follower's properties -->
+                    {{ follower.user_id }} is folling {{ follower.follower_id }}<br>
+                {% endfor %}
+
+
                 {% for post in posts_paginated %}
                     <div class="post">
                         <div class="post-first-row">
                             <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
                             {% if request.user.username != post.user.username %}
                                 <br>
-                                <button onclick="follow_unfollow('{{ post.user.username }}')">Follow/Unfollow</button>
+                                <button id="follow-unfollow-button-{{ post.user.id }}" onclick="follow_unfollow('{{ post.user.id }}')">
+                                        {% if post.user.username in followers.follower_id.all %}
+                                            Unfollow
+                                        {% else %}
+                                            Follow
+                                        {% endif %}
+                                    {{ followers.follower_id. }}
+                                </button>
                                 <br>
                             {% endif %}
-                            <p>{{ post.likes }} likes</p>
+                            <p>{{ post.post.all|length}} likes</p>
                         </div>
                         <div class="post-second-row">
                             <div class="post-info">
@@ -64,6 +79,9 @@
                 <a href="?page={{ posts_paginated.paginator.num_pages }}">Last &raquo;</a>
             {% endif %}
         </div>
+
+        <!--csrf token-->
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
     </div>
 
     <script>
@@ -74,6 +92,10 @@
                 create_post();
             };
         });
+
+        function getCSRFToken() {
+            return document.querySelector('input[name="csrf"]').value;
+        };
 
         function create_post(){
             fetch('/create_post',{
@@ -89,15 +111,29 @@
         };
 
         function follow_unfollow(action_profile){
-            fetch('/follow_unfollow',{
+            console.log('Action Profile ID:', action_profile);
+            status = document.querySelector('#follow-unfollow-button-'+ action_profile).innerHTML
+            if (status === "Unfollow"){
+                document.querySelector('#follow-unfollow-button-'+ action_profile).innerHTML = "Follow";
+            }
+            else {
+                document.querySelector('#follow-unfollow-button-'+ action_profile).innerHTML = "Unfollow";
+            }   
+            fetch('/follow_unfollow/',{
                 method: 'POST',
-                body: JSON.stringify({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()  // Include the CSRF token in the request headers
+                },
+                body: JSON.stringify(
+                    {
                         content: action_profile
                     }
                 )
             })
-            .then(() => window.location.reload())
-            .then(response => response.json());
+            .catch(error => {
+                console.error('Error:', error);
+            });
         };
     </script>
 {% endblock %}

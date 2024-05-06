@@ -14,10 +14,29 @@ from .models import User, Post, Like, Followers
 
 def index(request):
     posts = Post.objects.all().order_by("-date")
+    logged_in_user = request.user
+    followers = Followers.objects.filter(user_id = logged_in_user) 
     p = Paginator(posts, 10)
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
-    return render(request, "network/index.html", {"posts": posts, "posts_paginated": posts_paginated})
+    return render(request, "network/index.html", {
+        "posts": posts, 
+        "posts_paginated": posts_paginated,
+        "followers": followers})
+
+def following(request):
+    #retrieve currently logged user's info
+    logged_in_user = request.user
+    #retrieve from Followers model list where user_id = logged_in_user
+    following = logged_in_user.is_following.all().values_list('follower_id', flat=True)
+    #retrieve from Post where foreign key user
+    posts = Post.objects.filter(user__id__in=following) | Post.objects.filter(user=request.user)
+    posts.order_by("-date") 
+    #set up paginator
+    p = Paginator(posts, 10)
+    page = request.GET.get('page')
+    posts_paginated = p.get_page(page)
+    return render(request, "network/following.html", {"posts": posts, "posts_paginated": posts_paginated})
 
 
 def login_view(request):
@@ -49,6 +68,8 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+        first_name = request.POST["first_name"]
+        last_name = request.POST["last_name"]
 
         # Ensure password matches confirmation
         password = request.POST["password"]
@@ -62,10 +83,10 @@ def register(request):
         try:
             if 'profilePicture' in request.FILES:
                 profilePicture = request.FILES['profilePicture']
-                user = User.objects.create_user(username, email, password, profilePicture=profilePicture)
+                user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name, profilePicture=profilePicture)
             else:
                 profilePicture = settings.STATIC_URL + 'images/default.jpeg'
-                user = User.objects.create_user(username, email, password, profilePicture=profilePicture) 
+                user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name, profilePicture=profilePicture) 
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {
@@ -107,36 +128,22 @@ def create_post(request):
 def follow_unfollow(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        action_profile = data.get("content")
-        logged_in_user = request.user
+        action_profile_id = data.get("content")
+        action_profile = User.objects.get(id=action_profile_id)
+        logged_in_user_id = request.user
+        
 
         # Check if the user is already following the profile
-        if Followers.objects.filter(user_id=logged_in_user, follower_id=action_profile).exists():
+        if Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).exists():
             # If the follow relationship exists, delete it (unfollow)
-            Followers.objects.filter(user_id=logged_in_user, follower_id=action_profile).delete()
+            Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).delete()
             return JsonResponse({'status': 'unfollowed'})
         else:
             # If the follow relationship doesn't exist, create it (follow)
-            Followers.objects.create(user_id=logged_in_user, follower_id=action_profile)
+            Followers.objects.create(user_id=logged_in_user_id, follower_id=action_profile)
             return JsonResponse({'status': 'followed'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
-def following(request):
-    #retrieve currently logged user's info
-    logged_in_user = request.user
-    #retrieve from Followers model list where user_id = logged_in_user
-    following = logged_in_user.is_following.all().values_list('follower_id', flat=True)
-    #retrieve from Post where foreign key user
-    posts = Post.objects.filter(user__id__in=following).order_by("-date")
-    
-    #set up paginator
-    p = Paginator(posts, 10)
-    page = request.GET.get('page')
-    posts_paginated = p.get_page(page)
-    return render(request, "network/following.html", {"posts": posts, "posts_paginated": posts_paginated})
-
-
 
 
     

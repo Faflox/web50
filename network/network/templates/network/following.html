@@ -3,6 +3,23 @@
 
 {% block body %}
     <div class="content">
+        <!--creating a new post appears when user is authenticated-->
+        {% if request.user.is_authenticated %}
+        <div class="posts-container">
+            <div class="post">
+                <div class="post-first-row">
+                    <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
+                </div>
+                <div class="post-second-row">
+                <form id="compose-form">
+                    <textarea id='content' class ="form-control" name="content" id="new-post-content" placeholder="What's on your mind?"></textarea>
+                    <input type="submit">
+                </form>
+                </div>  
+            </div>
+        </div>
+        {% endif %}
+
         <!--displaying posts-->
         {% if posts %}
             <div class="posts-container">
