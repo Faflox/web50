@@ -10,5 +10,5 @@ urlpatterns = [
     path("profile/<str:username>/", views.profile, name="profile"),
     path("create_post", views.create_post, name="create_post"),
     path("following/", views.following, name="following"),
-    path("follow_unfollow/", views.follow_unfollow, name="follow_unfollow")
+    path("follow_unfollow/", views.follow_unfollow, name="follow_unfollow"),
 ]

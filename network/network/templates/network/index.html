@@ -27,7 +27,7 @@
 
                 {% for follower in followers %}
                     <!-- Access follower's properties -->
-                    {{ follower.user_id }} is folling {{ follower.follower_id }}<br>
+                    {{ follower.user_id }} is following {{ followers }}<br>
                 {% endfor %}
 
 
@@ -38,11 +38,11 @@
                             {% if request.user.username != post.user.username %}
                                 <br>
                                 <button id="follow-unfollow-button-{{ post.user.id }}" onclick="follow_unfollow('{{ post.user.id }}')">
-                                        {% if post.user.username in followers.follower_id.all %}
-                                            Unfollow
-                                        {% else %}
-                                            Follow
-                                        {% endif %}
+                                    {% if post.user.id in followers %}
+                                        Unfollow
+                                    {% else %}
+                                        Follow
+                                    {% endif %}
                                 </button>
                                 <br>
                             {% endif %}
@@ -109,30 +109,35 @@
             .then(response => response.json());
         };
 
-        function follow_unfollow(action_profile){
+        function follow_unfollow(action_profile) {
             console.log('Action Profile ID:', action_profile);
-            status = document.querySelector('#follow-unfollow-button-'+ action_profile).innerHTML
-            if (status === "Unfollow"){
-                document.querySelector('#follow-unfollow-button-'+ action_profile).innerHTML = "Follow";
+            var button = document.querySelector('#follow-unfollow-button-' + action_profile);
+            var status = button.innerHTML.trim();
+            if (status == "Unfollow") {
+                button.innerHTML = "Follow";
+            } else if (status == "Follow") {
+                button.innerHTML = "Unfollow";
             }
-            else {
-                document.querySelector('#follow-unfollow-button-'+ action_profile).innerHTML = "Unfollow";
-            }   
-            fetch('/follow_unfollow/',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()  // Include the CSRF token in the request headers
-                },
-                body: JSON.stringify(
-                    {
+            fetch('/follow_unfollow/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken() // Include the CSRF token in the request headers
+                    },
+                    body: JSON.stringify({
                         content: action_profile
+                    })
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Revert button text back to original on error
+                    if (status == "Unfollow") {
+                        button.innerHTML = "Unfollow";
+                    } else if (status == "Follow") {
+                        button.innerHTML = "Follow";
                     }
-                )
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        };
+                });
+        }
+        
     </script>
 {% endblock %}

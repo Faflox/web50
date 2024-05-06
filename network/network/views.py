@@ -15,7 +15,7 @@ from .models import User, Post, Like, Followers
 def index(request):
     posts = Post.objects.all().order_by("-date")
     logged_in_user = request.user
-    followers = Followers.objects.filter(user_id = logged_in_user) 
+    followers = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True)  
     p = Paginator(posts, 10)
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
