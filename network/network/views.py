@@ -15,8 +15,6 @@ from .models import User, Post, Like, Followers
 #why my code doesnt work on mac?
 def index(request):
     logged_in_user = request.user
-    followers = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True)  
-    followers = Followers.objects.filter(user_id = logged_in_user) 
     
     posts = Post.objects.all().order_by("-date")
     is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
