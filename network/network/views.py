@@ -14,31 +14,40 @@ from .models import User, Post, Like, Followers
 # main site
 def index(request):
     logged_in_user = request.user
-<<<<<<< Updated upstream
     followers = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True)  
-=======
     followers = Followers.objects.filter(user_id = logged_in_user) 
     
     posts = Post.objects.all().order_by("-date")
->>>>>>> Stashed changes
+    is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
+    is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
+    
+    posts = Post.objects.all().order_by("-date")
     p = Paginator(posts, 10)
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
     return render(request, "network/index.html", {
         "posts": posts, 
         "posts_paginated": posts_paginated,
-        "followers": followers})
+        "is_following": is_following,
+        "is_liking": is_liking})
 
 def following(request):
     logged_in_user = request.user
+
     following = logged_in_user.is_following.all().values_list('follower_id', flat=True)
     
     posts = Post.objects.filter(user__id__in=following) | Post.objects.filter(user=request.user)
+
+    is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
+    
+    posts = Post.objects.filter(user__id__in=is_following) | Post.objects.filter(user=request.user)
+
     posts.order_by("-date") 
     p = Paginator(posts, 10)
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
-    return render(request, "network/index.html", {
+
+    return render(request, "network/following.html", {
         "posts": posts, 
         "posts_paginated": posts_paginated})
 
@@ -112,7 +121,10 @@ def profile(request, username):
     #next line retrieves posts associated with the current user 
     user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")
     
-    return render(request, "network/profile.html", {'user_profile_info': user_profile_info, 'posts': user_posts, 'logged_in_user': request.user})
+    return render(request, "network/profile.html", {
+        'user_profile_info': user_profile_info, 
+        'posts': user_posts, 
+        'logged_in_user': request.user})
 
 
 @csrf_exempt
@@ -127,6 +139,62 @@ def create_post(request):
         else:
             return HttpResponseRedirect(reverse("index"))
 
+
+@csrf_exempt
+@login_required
+def edit_post(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        content = data.get("content")
+        post_id = data.get("post_id")
+        post = Post.objects.filter(id=post_id).first()
+        
+        if post is None:
+            return JsonResponse({'status': 'error', 'message': 'Invalid post ID'})
+        post.content = content
+        post.save()
+        return JsonResponse({'status': 'success', 'message': 'Post edited successfully'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+ 
+@csrf_exempt
+@login_required       
+def delete_post(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data.get("post_id")
+        post = Post.objects.filter(id=post_id).first()
+        
+        if post is None:
+            return JsonResponse({'status': 'error', 'message': 'Invalid post ID'})
+        post.delete()
+        return JsonResponse({'status': 'success', 'message': 'Post deleted successfully'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+@login_required   
+def like(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action_post_id = data.get("content")
+        action_post = Post.objects.filter(id=action_post_id).first()
+        logged_in_user = request.user
+        
+        if action_post is None:
+            return JsonResponse({'status': 'error', 'message': 'Invalid post ID'})
+        
+        if Like.objects.filter(user = logged_in_user, post = action_post_id).exists():
+            Like.objects.filter(user = logged_in_user, post = action_post_id).delete()
+            return JsonResponse({'status': 'unliked'})
+        else: 
+            Like.objects.create(user = logged_in_user, post = action_post)
+            return JsonResponse({'status': 'liked'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+            
+            
+
 @csrf_exempt
 @login_required
 def follow_unfollow(request):
@@ -139,11 +207,9 @@ def follow_unfollow(request):
 
         # Check if the user is already following the profile
         if Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).exists():
-            # If the follow relationship exists, delete it (unfollow)
             Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).delete()
             return JsonResponse({'status': 'unfollowed'})
         else:
-            # If the follow relationship doesn't exist, create it (follow)
             Followers.objects.create(user_id=logged_in_user_id, follower_id=action_profile)
             return JsonResponse({'status': 'followed'})
     else:

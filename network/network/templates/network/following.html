@@ -1,64 +1,282 @@
 {% extends "network/layout.html" %}
-{% load static %}
+
 
 {% block body %}
-    <div class="content">
-        <!--creating a new post appears when user is authenticated-->
-        {% if request.user.is_authenticated %}
-        <div class="posts-container">
-            <div class="post">
-                <div class="post-first-row">
-                    <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
-                </div>
-                <div class="post-second-row">
-                <form id="compose-form">
-                    <textarea id='content' class ="form-control" name="content" id="new-post-content" placeholder="What's on your mind?"></textarea>
-                    <input type="submit">
-                </form>
-                </div>  
+<div class="content">
+
+    <!--new post-->
+    {% if request.user.is_authenticated %}
+    <div class="posts-container">
+        <div class="post">
+            <div class="post-first-row">
+                <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
             </div>
+            <div class="post-second-row">
+            <form id="compose-form">
+                <textarea id='content' class ="form-control" name="content" id="new-post-content" placeholder="What's on your mind?"></textarea>
+                <input type="submit">
+            </form>
+            </div>  
         </div>
-        {% endif %}
-
-        <!--displaying posts-->
-        {% if posts %}
-            <div class="posts-container">
-                {% for post in posts_paginated %}
-                    <div class="post">
-                        <div class="post-first-row">
-                            <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
-                            <br>
-                            <p>Follow</p>
-                            <br>
-                            <p>{{ post.likes }} likes</p>
-                        </div>
-                        <div class="post-second-row">
-                            <div class="post-info">
-                                <b>{{ post.user.username }}</b>
-                                <i>{{ post.date }}</i>
-                            </div>
-                            {{ post.content }}
-                            <br>
-                            <button>Like</button>
-                        </div>  
-                    </div>
-                {% endfor %}
-            </div>
-            {% else %}
-                <div class="loader">No posts from this user yet.</div>
-            {% endif %}
-            <div class="paginator">
-                {% if posts_paginated.has_previous %}
-                    <a href="?page=1">&laquo; First</a>
-                    <a href="?page={{ posts_paginated.previous_page_number}}">Previous</a>
-                {% endif %}
-                
-                Page {{ posts_paginated.number}} of {{ posts_paginated.paginator.num_pages }}
-
-                {% if posts_paginated.has_next %}
-                    <a href="?page={{ posts_paginated.next_page_number }}">Next</a>
-                    <a href="?page={{ posts_paginated.paginator.num_pages }}">Last &raquo;</a>
-                {% endif %}
-            </div>
     </div>
+    {% endif %}
+
+    <!--displaying posts-->
+    {% if posts %}
+        <div class="posts-container">
+
+
+            {% for follower in is_following %}
+                <!-- Access follower's properties -->
+                {{ follower.user_id }} is following {{ is_following }}<br>
+            {% endfor %}
+
+            {% for liked_post in is_liking %}
+                <!-- Access follower's properties -->
+                {{ is_liking }}<br>
+            {% endfor %}
+
+
+            {% for post in posts_paginated %}
+                <div class="post">
+                    <div class="post-first-row">
+                        <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
+                        {% if request.user.username != post.user.username %}
+                            <br>
+                            <button id="follow-unfollow-button-{{ post.user.id }}" onclick="follow_unfollow('{{ post.user.id }}')">
+                                {% if post.user.id in is_following %}
+                                    Unfollow
+                                {% else %}
+                                    Follow
+                                {% endif %}
+                            </button>
+                            <br>
+                        {% else %}
+                            <button id="edit-button-{{ post.id }}" onclick="edit_post_window('{{ post.id }}', '{{  post.content}}')">
+                                Edit
+                            </button>
+                            <button id="delete-button-{{ post.id }}" onclick="delete_post('{{ post.id }}')">
+                                Delete
+                            </button>
+                        {% endif %}
+                        <div>
+                            <p id="like-amonut-{{ post.id }}">{{ post.post.all|length}}</p>
+                            <p>likes</p>
+                        </div>
+                        
+                    </div>
+                    <div class="post-second-row">
+                        <div class="post-info">
+                            <b>{{ post.user.username }}</b>
+                            <i>{{ post.date }}</i>
+                        </div>
+                        <div class="post-content-container">
+                            <div class="post-content" id="post-content-{{ post.id }}">
+                                {{ post.content }}
+                            </div>
+                            <div class="post-edit-content" id="post-edit-content-{{ post.id }}">
+                                <form id="edit-form-{{ post.id }}">
+                                    <textarea id='content-{{ post.id }}' class ="form-control" name="content" id="new-post-content">{{ post.content }}</textarea>
+                                    <input type="submit">
+                                </form>
+                            </div>
+                        </div>
+                        <br>
+                        <button id="like-button-{{ post.id }}" onclick="like('{{ post.id }}')">
+                            {% if post.id in is_liking %}
+                                Dislike
+                            {% else %}
+                                Like
+                            {% endif %}
+                        </button>
+                    </div>  
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="loader">No posts to show,  probably something is wrong.</div>
+    {% endif %}
+
+    <!--paginator-->
+    <div class="paginator">
+        {% if posts_paginated.has_previous %}
+            <a href="?page=1">&laquo; First</a>
+            <a href="?page={{ posts_paginated.previous_page_number}}">Previous</a>
+        {% endif %}
+        
+        Page {{ posts_paginated.number}} of {{ posts_paginated.paginator.num_pages }}
+
+        {% if posts_paginated.has_next %}
+            <a href="?page={{ posts_paginated.next_page_number }}">Next</a>
+            <a href="?page={{ posts_paginated.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+    </div>
+
+    <!--csrf token-->
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+
+        var postContent = document.querySelectorAll('.post-content');
+        postContent.forEach(function(element) {
+            element.style.display = 'block';
+        });
+        var postEditContent = document.querySelectorAll('.post-edit-content');
+        postEditContent.forEach(function(element) {
+            element.style.display = 'none';
+        });
+
+
+        document.querySelector('#compose-form').onsubmit = function(event)
+        {
+            event.preventDefault();
+            create_post();
+        };
+
+        var editForms = document.querySelectorAll('[id^="edit-form-"]');
+        editForms.forEach(function(form) {
+            form.onsubmit = function(event) {
+                event.preventDefault();
+                var postId = form.id.split('-')[2]; // Extract post ID from form ID
+                edit_post(postId); // Call edit_post function with post ID
+            };
+        });
+    });
+
+    function getCSRFToken() {
+        return document.querySelector('input[name="csrf"]').value;
+    };
+
+    function create_post(){
+        fetch('/create_post',{
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    content: document.querySelector('#content').value
+                }
+            )
+        })
+        .then(() => window.location.reload())
+        .then(response => response.json());
+    };
+
+    function edit_post_window(action_post_id, previous_content){
+        console.log('Action Post ID:', action_post_id);
+        console.log('Post content:', previous_content);
+        var editContent = document.querySelector('#post-edit-content-' + action_post_id);
+        var postContent = document.querySelector('#post-content-' + action_post_id)
+
+        if (editContent.style.display === 'none') {
+            editContent.style.display = 'block';
+            postContent.style.display = 'none';
+
+        } else {
+            editContent.style.display = 'none';
+            postContent.style.display = 'block';
+        }
+    }
+
+    function edit_post(action_post_id){
+        var editContent = document.querySelector('#post-edit-content-' + action_post_id);
+        var postContent = document.querySelector('#post-content-' + action_post_id)
+        var newInside = document.querySelector('#content-' + action_post_id).value
+        console.log('e', postContent)
+        fetch('/edit_post/',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                content: newInside,
+                post_id: action_post_id
+            })
+        })
+        .then(response => {
+            // Check if the response is OK
+            if (response.ok) {
+                postContent.innerHTML = newInside;
+                editContent.style.display = 'none';
+                postContent.style.display = 'block';
+            } else {
+                // Handle error response
+                console.error('Failed to edit post:', response.statusText);
+            }
+        })
+    }
+
+    function delete_post(action_post_id){
+        fetch('/delete_post/',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                post_id: action_post_id
+            })
+        })
+    }
+
+    function follow_unfollow(action_profile) {
+        console.log('Action Profile ID:', action_profile);
+        var button = document.querySelector('#follow-unfollow-button-' + action_profile);
+        var status = button.innerHTML.trim();
+        if (status == "Unfollow") {
+            button.innerHTML = "Follow";
+        } else if (status == "Follow") {
+            button.innerHTML = "Unfollow";
+        }
+        fetch('/follow_unfollow/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() // Include the CSRF token in the request headers
+                },
+                body: JSON.stringify({
+                    content: action_profile
+            })
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function  like(action_post_id){
+        console.log('Action Post ID: ', action_post_id)
+        var button = document.querySelector('#like-button-' + action_post_id);
+        var likes_container = document.querySelector('#like-amonut-'+ action_post_id);
+        var likes_amonut = parseInt(likes_container.innerHTML);
+        console.log('likes: ', likes_amonut)
+        var status = button.innerHTML.trim();
+        if (status == "Like") {
+            button.innerHTML = "Dislike";
+            likes_amonut ++;
+            console.log('likes after: ', likes_amonut)
+            likes_container.innerHTML = likes_amonut
+        } else if (status == "Dislike") {
+            button.innerHTML = "Like";
+            likes_amonut --;
+            console.log('likes after: ', likes_amonut)
+            likes_container.innerHTML = likes_amonut
+        } 
+        fetch('/like/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken() // Include the CSRF token in the request headers
+            },
+            body: JSON.stringify({
+                content: action_post_id
+            })
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        
+    }
+</script>
 {% endblock %}
