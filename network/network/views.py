@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User, Post, Like, Followers
 
 # main site
+#why my code doesnt work on mac?
 def index(request):
     logged_in_user = request.user
     followers = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True)  
