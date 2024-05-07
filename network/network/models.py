@@ -8,7 +8,6 @@ class User(AbstractUser):
     description = models.CharField(max_length=255, default="", null=True, blank=True) 
     profilePicture = models.ImageField(null=True, blank=True, upload_to="images")
     
-
 class Post(models.Model):
     content = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

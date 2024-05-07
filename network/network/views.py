@@ -8,11 +8,8 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-
 from .models import User, Post, Like, Followers
 
-# main site
-#why my code doesnt work on mac?
 def index(request):
     logged_in_user = request.user
     posts = Post.objects.all().order_by("-date")
@@ -118,8 +115,16 @@ def register(request):
 def profile(request, username):
     #create a variable user_profile_info that has the  data from the user that has the username provided from request
     user_profile_info = User.objects.get(username=username)
+    logged_in_user = request.user
     if not user_profile_info.profilePicture:
         user_profile_info.profilePicture = settings.STATIC_URL + 'images/default.jpg'
+        
+    if logged_in_user.is_authenticated:
+        is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
+        is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
+    else:
+        is_following = []
+        is_liking = []
         
     #next line retrieves posts associated with the current user 
     user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")
@@ -127,7 +132,9 @@ def profile(request, username):
     return render(request, "network/profile.html", {
         'user_profile_info': user_profile_info, 
         'posts': user_posts, 
-        'logged_in_user': request.user})
+        'logged_in_user': request.user,
+        'is_following': is_following,
+        'is_liking': is_liking})
 
 
 @csrf_exempt
