@@ -11,11 +11,16 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Like, Followers
 
-
+# main site
 def index(request):
-    posts = Post.objects.all().order_by("-date")
     logged_in_user = request.user
+<<<<<<< Updated upstream
     followers = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True)  
+=======
+    followers = Followers.objects.filter(user_id = logged_in_user) 
+    
+    posts = Post.objects.all().order_by("-date")
+>>>>>>> Stashed changes
     p = Paginator(posts, 10)
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
@@ -25,18 +30,17 @@ def index(request):
         "followers": followers})
 
 def following(request):
-    #retrieve currently logged user's info
     logged_in_user = request.user
-    #retrieve from Followers model list where user_id = logged_in_user
     following = logged_in_user.is_following.all().values_list('follower_id', flat=True)
-    #retrieve from Post where foreign key user
+    
     posts = Post.objects.filter(user__id__in=following) | Post.objects.filter(user=request.user)
     posts.order_by("-date") 
-    #set up paginator
     p = Paginator(posts, 10)
     page = request.GET.get('page')
     posts_paginated = p.get_page(page)
-    return render(request, "network/following.html", {"posts": posts, "posts_paginated": posts_paginated})
+    return render(request, "network/index.html", {
+        "posts": posts, 
+        "posts_paginated": posts_paginated})
 
 
 def login_view(request):
