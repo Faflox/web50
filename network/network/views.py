@@ -20,6 +20,9 @@ def index(request):
     if logged_in_user.is_authenticated:
         is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
         is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
+    else:
+        is_following = []
+        is_liking = []
     
     posts = Post.objects.all().order_by("-date")
     p = Paginator(posts, 10)
