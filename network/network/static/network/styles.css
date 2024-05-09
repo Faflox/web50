@@ -39,7 +39,10 @@ input{
 .post-creation{
     display: grid;
     justify-content: center;
-    width: 100%;
+}
+
+.form-control{
+    width: 400px;
 }
 
 
@@ -51,6 +54,8 @@ input{
     padding: 8px 20px;
     background-color: #000000;
     border-radius: 12px;
+    display: grid;
+    justify-content: center;
 }
 
 .navbar{
@@ -72,12 +77,12 @@ input{
 
 .action-button{
     margin: 0 4px;
-    background-color: #FFC857;
-    border-radius: 10px;
+    background-color: #e3a220;
+    border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 8px;
+    padding: 4px 16px;
 }
 
 .post{
@@ -145,4 +150,16 @@ input{
 
 .post-content{
     color: white;
+}
+
+.paginator{
+    color: antiquewhite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+a{
+    color: #e3a220;
 }

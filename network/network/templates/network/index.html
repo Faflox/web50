@@ -13,8 +13,8 @@
             </div>
             <div class="post-second-row">
             <form id="compose-form" class="post-creation">
-                <textarea id='content' class ="form-control" name="content" id="new-post-content" placeholder="What's on your mind?"></textarea>
-                <input type="submit">
+                <textarea id='content' class="form-control" name="content" id="new-post-content" placeholder="What's on your mind?"></textarea>
+                <input type="submit" value="Create Post">
             </form>
             </div>  
         </div>
@@ -66,7 +66,7 @@
                             </div>
                         </div>
                         <br>
-                        <button id="like-button-{{ post.id }}" onclick="like('{{ post.id }}')">
+                        <button id="like-button-{{ post.id }}" class="action-button" onclick="like('{{ post.id }}')">
                             {% if post.id in is_liking %}
                                 Dislike
                             {% else %}
@@ -143,7 +143,8 @@
             )
         })
         .then(() => window.location.reload())
-        .then(response => response.json());
+        .then(response => response.json())
+        .then(() => document.querySelector('#content').innerHTML = "");
     };
 
     function edit_post_window(action_post_id, previous_content){
