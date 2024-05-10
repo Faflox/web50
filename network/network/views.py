@@ -111,7 +111,6 @@ def register(request):
         return render(request, "network/register.html")
 
 
-
 def profile(request, username):
     #create a variable user_profile_info that has the  data from the user that has the username provided from request
     user_profile_info = User.objects.get(username=username)
@@ -127,7 +126,7 @@ def profile(request, username):
         is_liking = []
         
     #next line retrieves posts associated with the current user 
-    user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")
+    user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")    
     
     return render(request, "network/profile.html", {
         'user_profile_info': user_profile_info, 
@@ -136,6 +135,16 @@ def profile(request, username):
         'is_following': is_following,
         'is_liking': is_liking})
 
+
+def edit_description(request, username):
+    user_profile_info = User.objects.get(username=username)
+    data = json.loads(request.body)
+    new_description = data.get("content")
+    if new_description:
+        user_profile_info.description = new_description
+        user_profile_info.save()
+    
+    return render(request, "network/profile.html")
 
 @csrf_exempt
 @login_required

@@ -45,3 +45,19 @@
     justify-content: space-between;
     gap: 28px;
 }
+
+.description-edit{
+    display: grid;
+    align-items: center;
+}
+
+.edit-description-textarea{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 300px;
+    height: 140px;
+}
+
+.followers_amonut{
+    display: inline;
+}

@@ -3,7 +3,6 @@
 
 {% block body %}
 <div class="content">
-
     <!--new post-->
     {% if request.user.is_authenticated %}
     <div class="posts-container">
@@ -165,8 +164,8 @@
 
     function edit_post(action_post_id){
         var editContent = document.querySelector('#post-edit-content-' + action_post_id);
-        var postContent = document.querySelector('#post-content-' + action_post_id)
-        var newInside = document.querySelector('#content-' + action_post_id).value
+        var postContent = document.querySelector('#post-content-' + action_post_id);
+        var newInside = document.querySelector('#content-' + action_post_id).value;
         console.log('e', postContent)
         fetch('/edit_post/',{
             method: 'POST',

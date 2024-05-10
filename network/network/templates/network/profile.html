@@ -6,294 +6,327 @@
 
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'network/profile.css' %}">
+<link rel="stylesheet" href="{% static 'network/profile.css' %}">
 {% endblock %}
 
 
 {% block body %}
-    <div class="content">
-        <div class="left-row">
-            <div class="profile-image-container">
-                <img class="profile-image" src="{{ user_profile_info.profilePicture.url }}" alt="Profile Picture">
-            </div>
-            
-            {% if request.user.username == user_profile_info.username %}
-            <button class="action-button change-profile-picture-button" id="change-profile-picture-button">Edit Profile Picture</button>
-            <div class="change-profile-picture" id="change-profile-picture">
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input class="action-button" type="file" name="profilePicture" accept="image/*">
-                    <input class="action-button" type="submit" value="Submit">
-                </form>
-            </div>
-            {% endif %}
-
-            <!--display user_profile_info-->
-            <b>{{ user_profile_info.username }}</b>
-            {{ user_profile_info.first_name }}
-            {{ user_profile_info.last_name }}
-            <div class="followers-stats">
-                <div>
-                    Followers: {{user_profile_info.followed_by.all|length}}
-                </div>
-                <div>
-                    Following: {{user_profile_info.is_following.all|length}}
-                </div>
-            </div>
-            {% if request.user.username != user_profile_info.username %}
-            <button class="action-button">Follow Button</button>
-            {% endif %}
-
-            <!--Description. can edit only when on your profile-->
-            <div class="description">
-                {{ user.description }}
-            </div>
-            {% if request.user.username == user_profile_info.username %}
-            <div class="description-edit">
-                <button type="submit" class="action-button change-description-button" value="Edit Description">Edit Description</button>
-            </div>
-            {% endif %}
-            Joined: {{ user.date_joined.date}}
+<div class="content">
+    <div class="left-row">
+        <div class="profile-image-container">
+            <img class="profile-image" src="{{ user_profile_info.profilePicture.url }}" alt="Profile Picture">
         </div>
+        
+        {% if request.user.username == user_profile_info.username %}
+        <button class="action-button change-profile-picture-button" id="change-profile-picture-button">Edit Profile Picture</button>
+        <div class="change-profile-picture" id="change-profile-picture">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input class="action-button" type="file" name="profilePicture" accept="image/*">
+                <input class="action-button" type="submit" value="Submit">
+            </form>
+        </div>
+        {% endif %}
 
-        <!--row that contrains posts-->
-        <div class="right-row">
-            {% if posts %}
-                <div class="posts-container">
-                    {% for post in posts %}
-                        <div class="post">
-                            <div class="post-first-row">
-                                <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
-                                {% if request.user.username != post.user.username %}
-                                    <button id="follow-unfollow-button-{{ post.user.id }}" onclick="follow_unfollow('{{ post.user.id }}')">
-                                        {% if post.user.id in is_following %}
-                                            Unfollow
-                                        {% else %}
-                                            Follow
-                                        {% endif %}
-                                    </button>
-                                {% else %}
-                                    <button id="edit-button-{{ post.id }}" onclick="edit_post_window('{{ post.id }}', '{{  post.content}}')">
-                                        Edit
-                                    </button>
-                                    <button id="delete-button-{{ post.id }}" onclick="delete_post('{{ post.id }}')">
-                                        Delete
-                                    </button>
-                                {% endif %}
-                                <div class="like-container">
-                                    <p id="like-amonut-{{ post.id }}">{{ post.post.all|length}}</p>
-                                    <p><i class="bi bi-heart-fill"></i></p>
-                                </div>
-                            </div>
-                            <div class="post-second-row">
-                                <div class="post-info">
-                                    <b>{{ post.user.username }}</b>
-                                    <i>{{ post.date }}</i>
-                                </div>
-                                <div class="post-content-container">
-                                    <div class="post-content" id="post-content-{{ post.id }}">
-                                        {{ post.content }}
-                                    </div>
-                                    <div class="post-edit-content" id="post-edit-content-{{ post.id }}">
-                                        <form id="edit-form-{{ post.id }}">
-                                            <textarea id='content-{{ post.id }}' class ="form-control" name="content" id="new-post-content">{{ post.content }}</textarea>
-                                            <input type="submit">
-                                        </form>
-                                    </div>
-                                </div>
-                                <br>
-                                <button id="like-button-{{ post.id }}" onclick="like('{{ post.id }}')">
-                                    {% if post.id in is_liking %}
-                                        Dislike
-                                    {% else %}
-                                        Like
-                                    {% endif %}
-                                </button>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+        <!--display user_profile_info-->
+        <b>{{ user_profile_info.username }}</b>
+        {{ user_profile_info.first_name }}
+        {{ user_profile_info.last_name }}
+        <div class="followers-stats">
+            <div>
+                Followers: <p id="followers" class="followers_amonut">{{user_profile_info.followed_by.all|length}}</p>
+            </div>
+            <div>
+                Following: {{user_profile_info.is_following.all|length}}
+            </div>
+        </div>
+        {% if request.user.username != user_profile_info.username %}
+        <button id="follow-unfollow-button-{{ user_profile_info.id }}" class="action-button" onclick="follow_unfollow('{{ user_profile_info.id }}')">
+            {% if user_profile_info.id in is_following %}
+                Unfollow
             {% else %}
-                <div class="loader">No posts from this user yet.</div>
+                Follow
             {% endif %}
+        </button>
+        {% endif %}
+
+        <!--Description-->
+        <div id="description" class="description">
+            {{ user_profile_info.description }}
         </div>
+        {% if request.user.username == user_profile_info.username %}
+        <button type="submit" id="change-description-button" class="action-button change-description-button" value="Edit Description" onclick="show_edit_description()">Edit Description</button>
+        <div id="description-edit" class="description-edit">
+            <textarea id="edit-description-textarea", class="edit-description-textarea">{{ user_profile_info.description }}</textarea>
+            <button type="submit" id="change-description-button-send" class="action-button change-description-button" onclick="edit_description()">Edit</button>
+        </div>
+        {% endif %}
+        Joined: {{ user_profile_info.date_joined.date}}
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function(){
-    
-            var postContent = document.querySelectorAll('.post-content');
-            postContent.forEach(function(element) {
-                element.style.display = 'block';
-            });
-            var postEditContent = document.querySelectorAll('.post-edit-content');
-            postEditContent.forEach(function(element) {
-                element.style.display = 'none';
-            });
-            var changeProfilePicture = document.querySelector('.change-profile-picture');
-            if (changeProfilePicture) {
+    <!--right row-->
+    <div class="right-row">
+        {% if posts %}
+            <div class="posts-container">
+                {% for post in posts %}
+                    <div class="post">
+                        <div class="post-first-row">
+                            <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
+                            {% if request.user.username == user_profile_info.username  %}
+                                <button id="edit-button-{{ post.id }}" onclick="edit_post_window('{{ post.id }}', '{{  post.content}}')">
+                                    Edit
+                                </button>
+                                <button id="delete-button-{{ post.id }}" onclick="delete_post('{{ post.id }}')">
+                                    Delete
+                                </button>
+                            {% endif %}
+                            <div class="like-container">
+                                <p id="like-amonut-{{ post.id }}">{{ post.post.all|length}}</p>
+                                <p><i class="bi bi-heart-fill"></i></p>
+                            </div>
+                        </div>
+                        <div class="post-second-row">
+                            <div class="post-info">
+                                <b>{{ post.user.username }}</b>
+                                <i>{{ post.date }}</i>
+                            </div>
+                            <div class="post-content-container">
+                                <div class="post-content" id="post-content-{{ post.id }}">
+                                    {{ post.content }}
+                                </div>
+                                {% if request.user.username == user_profile_info.username %}
+                                    <div class="post-edit-content" id="post-edit-content-{{ post.id }}">
+                                        <form id="edit-form-{{ post.id }}" >
+                                            <textarea id='content-{{ post.id }}' class ="form-control" name="content" id="new-post-content">{{ post.content }}</textarea>
+                                            <input onclick="edit_post('{{ post.id }}', event)" type="submit">
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <br>
+                            <button id="like-button-{{ post.id }}" onclick="like('{{ post.id }}')">
+                                {% if post.id in is_liking %}
+                                    Dislike
+                                {% else %}
+                                    Like
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="loader">No posts from this user yet.</div>
+        {% endif %}
+    </div>
+
+    <!--csrf token-->
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        
+        document.querySelector('#description-edit').style.display = 'none';
+
+        var postContent = document.querySelectorAll('.post-content');
+        postContent.forEach(function(element) {
+            element.style.display = 'block';
+        });
+        var postEditContent = document.querySelectorAll('.post-edit-content');
+        postEditContent.forEach(function(element) {
+            element.style.display = 'none';
+        });
+        var changeProfilePicture = document.querySelector('.change-profile-picture');
+        if (changeProfilePicture) {
+            changeProfilePicture.style.display = 'none';
+        }
+
+        document.querySelector('.change-profile-picture-button').addEventListener('click', function(){
+            if (changeProfilePicture.style.display == 'block'){
                 changeProfilePicture.style.display = 'none';
             }
+            else if (changeProfilePicture.style.display == 'none'){
+                changeProfilePicture.style.display = 'block';
+            }
+        });  
 
-            document.querySelector('.change-profile-picture-button').addEventListener('click', function(){
-                if (changeProfilePicture.style.display == 'block'){
-                    changeProfilePicture.style.display = 'none';
+        document.querySelector('#compose-form').onsubmit = function(event)
+        {
+            event.preventDefault();
+            create_post();
+        }; 
+    });
+
+    function getCSRFToken() {
+        return document.querySelector('input[name="csrf"]').value;
+    };
+
+    function create_post(){
+        fetch('/create_post',{
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    content: document.querySelector('#content').value
                 }
-                else if (changeProfilePicture.style.display == 'none'){
-                    changeProfilePicture.style.display = 'block';
-                }
-            });
-            
-    
-            document.querySelector('#compose-form').onsubmit = function(event)
-            {
-                event.preventDefault();
-                create_post();
-            };
-    
-            var editForms = document.querySelectorAll('[id^="edit-form-"]');
-            editForms.forEach(function(form) {
-                form.onsubmit = function(event) {
-                    event.preventDefault();
-                    var postId = form.id.split('-')[2]; // Extract post ID from form ID
-                    edit_post(postId); // Call edit_post function with post ID
-                };
-            });
-        });
-    
-        function getCSRFToken() {
-            return document.querySelector('input[name="csrf"]').value;
-        };
-    
-        function create_post(){
-            fetch('/create_post',{
-                method: 'POST',
-                body: JSON.stringify(
-                    {
-                        content: document.querySelector('#content').value
-                    }
-                )
+            )
+        })
+        .then(() => window.location.reload())
+        .then(response => response.json());
+    };
+
+    function edit_post_window(action_post_id, previous_content){
+        console.log('Action Post ID:', action_post_id);
+        console.log('Post content:', previous_content);
+        var editContent = document.querySelector('#post-edit-content-' + action_post_id);
+        var postContent = document.querySelector('#post-content-' + action_post_id);
+
+        if (editContent.style.display === 'none') {
+            editContent.style.display = 'block';
+            postContent.style.display = 'none';
+
+        } else {
+            editContent.style.display = 'none';
+            postContent.style.display = 'block';
+        }
+        console.log('edit_post_window complete');
+    }
+
+    function edit_post(action_post_id, event){
+        event.preventDefault();
+        var editContent = document.querySelector('#post-edit-content-' + action_post_id);
+        var postContent = document.querySelector('#post-content-' + action_post_id);
+        var newInside = document.querySelector('#content-' + action_post_id).value;
+        console.log('New inside:', newInside)
+        fetch(window.location.origin + '/edit_post/',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                content: newInside,
+                post_id: action_post_id
             })
-            .then(() => window.location.reload())
-            .then(response => response.json());
-        };
-    
-        function edit_post_window(action_post_id, previous_content){
-            console.log('Action Post ID:', action_post_id);
-            console.log('Post content:', previous_content);
-            var editContent = document.querySelector('#post-edit-content-' + action_post_id);
-            var postContent = document.querySelector('#post-content-' + action_post_id)
-    
-            if (editContent.style.display === 'none') {
-                editContent.style.display = 'block';
-                postContent.style.display = 'none';
-    
-            } else {
+        })
+        .then(response => {
+            // Check if the response is OK
+            if (response.ok) {
+                postContent.innerHTML = newInside;
                 editContent.style.display = 'none';
                 postContent.style.display = 'block';
+            } else {
+                // Handle error response
+                console.error('Failed to edit post:', response.statusText);
             }
+        })
+    }
+
+    function show_edit_description(){
+        document.querySelector('#change-description-button').style.display = 'none';
+        document.querySelector('#description-edit').style.display = 'block';
+    }
+
+    function edit_description() {
+        var new_description = document.querySelector('#edit-description-textarea').value;
+        console.log('New description:', new_description);
+        fetch('edit_description/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                content: new_description
+            })
+        })
+        .then(() => {
+            console.log('sent', new_description);
+            document.querySelector('#change-description-button').style.display = 'block';
+            document.querySelector('#description-edit').style.display = 'none';
+            document.querySelector('#description').innerHTML = new_description;
+            console.log('Edit_description finished');
+        })
+    }
+
+    function delete_post(action_post_id){
+        fetch('/delete_post/',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                post_id: action_post_id
+            })
+        })
+        .then(document.querySelector('#post-'+ action_post_id).style.display = 'none');
+    }
+
+    function follow_unfollow(action_profile) {
+        console.log('Action Profile ID:', action_profile);
+        var button = document.querySelector('#follow-unfollow-button-' + action_profile);
+        var status = button.innerHTML.trim();
+        var followers = document.querySelector('#followers');
+        var followers_amount = parseInt(followers.innerHTML);
+
+        if (status == "Unfollow") {
+            button.innerHTML = "Follow";
+            followers_amount --;
+            followers.innerHTML = followers_amount;
+        } else if (status == "Follow") {
+            button.innerHTML = "Unfollow";
+            followers_amount ++;
+            followers.innerHTML = followers_amount;
         }
-    
-        function edit_post(action_post_id){
-            var editContent = document.querySelector('#post-edit-content-' + action_post_id);
-            var postContent = document.querySelector('#post-content-' + action_post_id)
-            var newInside = document.querySelector('#content-' + action_post_id).value
-            console.log('e', postContent)
-            fetch('/edit_post/',{
+        fetch('/follow_unfollow/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCSRFToken()
                 },
                 body: JSON.stringify({
-                    content: newInside,
-                    post_id: action_post_id
-                })
+                    content: action_profile
             })
-            .then(response => {
-                // Check if the response is OK
-                if (response.ok) {
-                    postContent.innerHTML = newInside;
-                    editContent.style.display = 'none';
-                    postContent.style.display = 'block';
-                } else {
-                    // Handle error response
-                    console.error('Failed to edit post:', response.statusText);
-                }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function like(action_post_id){
+        console.log('Action Post ID: ', action_post_id);
+        var button = document.querySelector('#like-button-' + action_post_id);
+        var likes_container = document.querySelector('#like-amonut-'+ action_post_id);
+        var likes_amonut = parseInt(likes_container.innerHTML);
+        console.log('likes: ', likes_amonut);
+        var status = button.innerHTML.trim();
+        if (status == "Like") {
+            button.innerHTML = "Dislike";
+            likes_amonut ++;
+            console.log('likes after: ', likes_amonut)
+            likes_container.innerHTML = likes_amonut
+        } else if (status == "Dislike") {
+            button.innerHTML = "Like";
+            likes_amonut --;
+            console.log('likes after: ', likes_amonut)
+            likes_container.innerHTML = likes_amonut
+        } 
+        fetch('/like/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                content: action_post_id
             })
-        }
-    
-        function delete_post(action_post_id){
-            fetch('/delete_post/',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({
-                    post_id: action_post_id
-                })
-            })
-            .then(document.querySelector('#post-'+ action_post_id).style.display = 'none')
-        }
-    
-        function follow_unfollow(action_profile) {
-            console.log('Action Profile ID:', action_profile);
-            var button = document.querySelector('#follow-unfollow-button-' + action_profile);
-            var status = button.innerHTML.trim();
-            if (status == "Unfollow") {
-                button.innerHTML = "Follow";
-            } else if (status == "Follow") {
-                button.innerHTML = "Unfollow";
-            }
-            fetch('/follow_unfollow/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCSRFToken() // Include the CSRF token in the request headers
-                    },
-                    body: JSON.stringify({
-                        content: action_profile
-                })
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    
-        function  like(action_post_id){
-            console.log('Action Post ID: ', action_post_id)
-            var button = document.querySelector('#like-button-' + action_post_id);
-            var likes_container = document.querySelector('#like-amonut-'+ action_post_id);
-            var likes_amonut = parseInt(likes_container.innerHTML);
-            console.log('likes: ', likes_amonut)
-            var status = button.innerHTML.trim();
-            if (status == "Like") {
-                button.innerHTML = "Dislike";
-                likes_amonut ++;
-                console.log('likes after: ', likes_amonut)
-                likes_container.innerHTML = likes_amonut
-            } else if (status == "Dislike") {
-                button.innerHTML = "Like";
-                likes_amonut --;
-                console.log('likes after: ', likes_amonut)
-                likes_container.innerHTML = likes_amonut
-            } 
-            fetch('/like/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken() // Include the CSRF token in the request headers
-                },
-                body: JSON.stringify({
-                    content: action_post_id
-                })
-            })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error);
-            });
-            
-        }
-    </script>
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error:', error);
+        })
+    }
+
+</script>
 {% endblock %}
