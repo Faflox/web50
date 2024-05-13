@@ -3,13 +3,12 @@
 
 {% block body %}
 <div class="content">
-
     <!--new post-->
     {% if request.user.is_authenticated %}
     <div class="posts-container">
         <div class="post">
             <div class="post-first-row">
-                <img class="post-profile-image" src="{{ user.profilePicture }}" alt="Profile Picture">
+                <img class="post-profile-image" src="{{ user.profilePicture.url }}" alt="Profile Picture">
             </div>
             <div class="post-second-row">
             <form id="compose-form">
@@ -27,20 +26,17 @@
 
 
             {% for follower in is_following %}
-                <!-- Access follower's properties -->
                 {{ follower.user_id }} is following {{ is_following }}<br>
             {% endfor %}
 
             {% for liked_post in is_liking %}
-                <!-- Access follower's properties -->
                 {{ is_liking }}<br>
             {% endfor %}
-
 
             {% for post in posts_paginated %}
                 <div class="post">
                     <div class="post-first-row">
-                        <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture }}" alt="Profile Picture"></a>
+                        <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture.url }}" alt="Profile Picture"></a>
                         {% if request.user.username != post.user.username %}
                             <br>
                             <button id="follow-unfollow-button-{{ post.user.id }}" onclick="follow_unfollow('{{ post.user.id }}')">
@@ -150,6 +146,7 @@
     };
 
     function create_post(){
+        console.log('starting creating a post')
         fetch('/create_post',{
             method: 'POST',
             body: JSON.stringify(
@@ -159,7 +156,8 @@
             )
         })
         .then(() => window.location.reload())
-        .then(response => response.json());
+        .then(response => response.json())
+        .then(() => document.querySelector('#content').innerHTML = "");
     };
 
     function edit_post_window(action_post_id, previous_content){

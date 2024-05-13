@@ -33,14 +33,8 @@ def index(request):
 
 def following(request):
     logged_in_user = request.user
-
-    following = logged_in_user.is_following.all().values_list('follower_id', flat=True)
-    
-    posts = Post.objects.filter(user__id__in=following) | Post.objects.filter(user=request.user)
-
     is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
-    
-    posts = Post.objects.filter(user__id__in=is_following) | Post.objects.filter(user=request.user)
+    posts = (Post.objects.filter(user_id__in=is_following)) | (Post.objects.filter(user=logged_in_user))
 
     posts.order_by("-date") 
     p = Paginator(posts, 10)
@@ -126,11 +120,15 @@ def profile(request, username):
         is_liking = []
         
     #next line retrieves posts associated with the current user 
-    user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")    
+    user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")  
+    p = Paginator(user_posts, 10)
+    page = request.GET.get('page')
+    posts_paginated = p.get_page(page)  
     
     return render(request, "network/profile.html", {
         'user_profile_info': user_profile_info, 
         'posts': user_posts, 
+        'posts_paginated': posts_paginated,
         'logged_in_user': request.user,
         'is_following': is_following,
         'is_liking': is_liking})

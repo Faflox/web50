@@ -31,7 +31,7 @@
                         <a class="nav-link" href="{% url 'following' %}">Following</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' user.username%}"><img class="navbar-profile-picture" src="{{ user.profilePicture }}" alt="Profile Picture"></a>
+                        <a class="nav-link" href="{% url 'profile' user.username%}"><img class="navbar-profile-picture" src="{{ user.profilePicture.url }}" alt="Profile Picture"></a>
                     </li>
                     <li class="nav-item">
                         <i class="bi bi-box-arrow-right"></i>
