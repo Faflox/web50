@@ -7,44 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
 from .models import User, Post, Like, Followers
-
-def index(request):
-    logged_in_user = request.user
-    posts = Post.objects.all().order_by("-date")
-    
-    if logged_in_user.is_authenticated:
-        is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
-        is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
-    else:
-        is_following = []
-        is_liking = []
-    
-    posts = Post.objects.all().order_by("-date")
-    p = Paginator(posts, 10)
-    page = request.GET.get('page')
-    posts_paginated = p.get_page(page)
-    return render(request, "network/index.html", {
-        "posts": posts, 
-        "posts_paginated": posts_paginated,
-        "is_following": is_following,
-        "is_liking": is_liking})
-
-def following(request):
-    logged_in_user = request.user
-    is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
-    posts = (Post.objects.filter(user_id__in=is_following)) | (Post.objects.filter(user=logged_in_user))
-
-    posts.order_by("-date") 
-    p = Paginator(posts, 10)
-    page = request.GET.get('page')
-    posts_paginated = p.get_page(page)
-
-    return render(request, "network/following.html", {
-        "posts": posts, 
-        "posts_paginated": posts_paginated})
-
 
 def login_view(request):
     if request.method == "POST":
@@ -105,13 +68,46 @@ def register(request):
         return render(request, "network/register.html")
 
 
-def profile(request, username):
-    #create a variable user_profile_info that has the  data from the user that has the username provided from request
-    user_profile_info = User.objects.get(username=username)
+def index(request):
     logged_in_user = request.user
+    if logged_in_user.is_authenticated:
+        is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
+        is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
+    else:
+        is_following = []
+        is_liking = []
+    
+    posts = Post.objects.all().order_by("-date")
+    posts_paginated = paginate_function(posts, request)
+    return render(request, "network/index.html", {
+        "posts": posts, 
+        "posts_paginated": posts_paginated,
+        "is_following": is_following,
+        "is_liking": is_liking})
+
+
+def following(request):
+    logged_in_user = request.user
+    is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
+    is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
+    
+    posts = (Post.objects.filter(user_id__in=is_following)) | (Post.objects.filter(user=logged_in_user))
+    posts = posts.order_by("-date") 
+    posts_paginated = paginate_function(posts, request)
+
+    return render(request, "network/following.html", {
+        "posts": posts, 
+        "posts_paginated": posts_paginated,
+        "is_following": is_following,
+        "is_liking": is_liking})
+
+
+def profile(request, username):
+    user_profile_info = User.objects.get(username=username)
     if not user_profile_info.profilePicture:
         user_profile_info.profilePicture = settings.STATIC_URL + 'images/default.jpg'
         
+    logged_in_user = request.user
     if logged_in_user.is_authenticated:
         is_following = Followers.objects.filter(user_id = logged_in_user.id).values_list('follower_id', flat=True) 
         is_liking =  Like.objects.filter(user = logged_in_user).values_list('post', flat=True)
@@ -119,32 +115,26 @@ def profile(request, username):
         is_following = []
         is_liking = []
         
-    #next line retrieves posts associated with the current user 
-    user_posts = Post.objects.filter(user=user_profile_info).order_by("-date")  
-    p = Paginator(user_posts, 10)
-    page = request.GET.get('page')
-    posts_paginated = p.get_page(page)  
+    posts = Post.objects.filter(user=user_profile_info).order_by("-date")  
+    posts_paginated = paginate_function(posts, request) 
+    
+    if request.method == "POST":
+        if 'profilePicture' in request.FILES:
+            new_picture =  request.FILES['profilePicture']
+            user_profile_info.profilePicture = new_picture
+            user_profile_info.save()
+        else:
+            print("No photo")
+        
     
     return render(request, "network/profile.html", {
         'user_profile_info': user_profile_info, 
-        'posts': user_posts, 
+        'posts': posts, 
         'posts_paginated': posts_paginated,
         'logged_in_user': request.user,
         'is_following': is_following,
         'is_liking': is_liking})
 
-
-def edit_description(request, username):
-    user_profile_info = User.objects.get(username=username)
-    data = json.loads(request.body)
-    new_description = data.get("content")
-    if new_description:
-        user_profile_info.description = new_description
-        user_profile_info.save()
-    
-    return render(request, "network/profile.html")
-
-@csrf_exempt
 @login_required
 def create_post(request):
     if request.method == "POST":
@@ -152,12 +142,13 @@ def create_post(request):
         content = data.get("content")
         if content:
             Post.objects.create(user=request.user, content=content)
+            print("Post created sucesfully")
             return HttpResponseRedirect(reverse("index"))
         else:
+            print("Post was not")
             return HttpResponseRedirect(reverse("index"))
 
 
-@csrf_exempt
 @login_required
 def edit_post(request):
     if request.method == "POST":
@@ -172,24 +163,27 @@ def edit_post(request):
         post.save()
         return JsonResponse({'status': 'success', 'message': 'Post edited successfully'})
     else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
- 
-@csrf_exempt
-@login_required       
-def delete_post(request):
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}) 
+  
+  
+@login_required
+def follow_unfollow(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        post_id = data.get("post_id")
-        post = Post.objects.filter(id=post_id).first()
+        action_profile_id = data.get("content")
+        logged_in_user_id = request.user
         
-        if post is None:
-            return JsonResponse({'status': 'error', 'message': 'Invalid post ID'})
-        post.delete()
-        return JsonResponse({'status': 'success', 'message': 'Post deleted successfully'})
+        if Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).exists():
+            Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).delete()
+            return JsonResponse({'status': 'unfollowed'})
+        else:
+            action_profile = User.objects.get(id=action_profile_id)
+            Followers.objects.create(user_id=logged_in_user_id, follower_id=action_profile)
+            return JsonResponse({'status': 'followed'})
     else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
-@csrf_exempt
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})  
+       
+ 
 @login_required   
 def like(request):
     if request.method == "POST":
@@ -208,29 +202,43 @@ def like(request):
             Like.objects.create(user = logged_in_user, post = action_post)
             return JsonResponse({'status': 'liked'})
     else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-            
-            
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})   
+    
 
-@csrf_exempt
-@login_required
-def follow_unfollow(request):
+def edit_description(request, username):
+    user_profile_info = User.objects.get(username=username)
+    data = json.loads(request.body)
+    new_description = data.get("content")
+    if new_description:
+        user_profile_info.description = new_description
+        user_profile_info.save()
+    
+    return render(request, "network/profile.html")
+
+
+@login_required       
+def delete_post(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        action_profile_id = data.get("content")
-        action_profile = User.objects.get(id=action_profile_id)
-        logged_in_user_id = request.user
+        post_id = data.get("post_id")
+        post = Post.objects.filter(id=post_id).first()
         
-
-        # Check if the user is already following the profile
-        if Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).exists():
-            Followers.objects.filter(user_id=logged_in_user_id, follower_id=action_profile_id).delete()
-            return JsonResponse({'status': 'unfollowed'})
-        else:
-            Followers.objects.create(user_id=logged_in_user_id, follower_id=action_profile)
-            return JsonResponse({'status': 'followed'})
+        if post is None:
+            return JsonResponse({'status': 'error', 'message': 'Invalid post ID'})
+        post.delete()
+        return JsonResponse({'status': 'success', 'message': 'Post deleted successfully'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+def paginate_function(posts, request):
+    posts = posts.order_by("-date") 
+    p = Paginator(posts, 10)
+    page = request.GET.get('page')
+    posts_paginated = p.get_page(page)
+    return posts_paginated
+            
+
 
 
     

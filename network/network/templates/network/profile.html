@@ -20,10 +20,10 @@
         {% if request.user.username == user_profile_info.username %}
         <button class="action-button change-profile-picture-button" id="change-profile-picture-button">Edit Profile Picture</button>
         <div class="change-profile-picture" id="change-profile-picture">
-            <form method="POST" enctype="multipart/form-data">
+            <form action="/profile/{{ request.user.username }}/" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input class="action-button" type="file" name="profilePicture" accept="image/*">
-                <input class="action-button" type="submit" value="Submit">
+                <input class="action-button" type="file" name="profilePicture" placeholder="Profile Picture" accept="image/*">
+                <input class="action-button" type="submit" value="Change Profile Picture">
             </form>
         </div>
         {% endif %}
@@ -69,8 +69,8 @@
         {% if posts %}
             <div class="posts-container">
                 {% for post in posts_paginated %}
-                    <div class="post">
-                        <div class="post-first-row">
+                    <div class="post" id="post-{{ post.id }}">
+                        <div class="post-first-row" >
                             <a href="{% url 'profile' post.user.username%}"><img class="post-profile-image" src="{{ post.user.profilePicture.url }}" alt="Profile Picture"></a>
                             {% if request.user.username == user_profile_info.username  %}
                                 <button id="edit-button-{{ post.id }}" onclick="edit_post_window('{{ post.id }}', '{{  post.content}}')">
@@ -182,6 +182,10 @@
     function create_post(){
         fetch('/create_post',{
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
             body: JSON.stringify(
                 {
                     content: document.querySelector('#content').value
@@ -277,7 +281,7 @@
                 post_id: action_post_id
             })
         })
-        .then(document.querySelector('#post-'+ action_post_id).style.display = 'none');
+        .then(document.querySelector('#post-'+ action_post_id).style.display = 'none')
     }
 
     function follow_unfollow(action_profile) {
